@@ -1,14 +1,14 @@
-import { useEffect } from "react";
-import axios from "axios";
+import Register from "./Register";
+import Login from "./Login";
 
 function App() {
-  useEffect(() => {
-    axios.get("http://localhost:5001/")
-      .then(res => console.log(res.data))
-      .catch(err => console.log(err));
-  }, []);
-
-  return <h1>Frontend Connected</h1>;
+  return (
+    <div>
+      <h1>Auth System</h1>
+      <Register />
+      <Login />
+    </div>
+  );
 }
 
 export default App;
