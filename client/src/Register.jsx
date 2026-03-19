@@ -1,12 +1,20 @@
 import { useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import "./Auth.css";
 
 function Register() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: ""
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -14,22 +22,76 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5001/api/register", form);
-      alert(res.data.message);
+      await axios.post("http://localhost:5001/api/register", form);
+
+      toast.success("Account created 💜");
+
+      navigate("/login");
+
     } catch (err) {
-      alert(err.response.data.message);
+      toast.error(err.response?.data?.message || "Registration failed");
     }
+
+    setLoading(false);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input name="name" placeholder="Name" onChange={handleChange} />
-      <input name="email" placeholder="Email" onChange={handleChange} />
-      <input name="password" placeholder="Password" onChange={handleChange} />
-      <button type="submit">Register</button>
-    </form>
+    <div className="auth-container">
+      <div className="auth-card">
+
+        <h2>Create Account 💜</h2>
+
+        <form onSubmit={handleSubmit}>
+
+          <div className="input-group">
+            <input
+              type="text"
+              name="name"
+              required
+              placeholder=" "
+              onChange={handleChange}
+            />
+            <label>Full Name</label>
+          </div>
+
+          <div className="input-group">
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder=" "
+              onChange={handleChange}
+            />
+            <label>Email</label>
+          </div>
+
+          <div className="input-group password-field">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              required
+              placeholder=" "
+              onChange={handleChange}
+            />
+            <label>Password</label>
+            <span onClick={() => setShowPassword(!showPassword)}>👁️</span>
+          </div>
+
+          <button disabled={loading}>
+            {loading ? "Creating..." : "Register"}
+          </button>
+
+        </form>
+
+        <p onClick={() => navigate("/login")}>
+          Already have an account? Login
+        </p>
+
+      </div>
+    </div>
   );
 }
 
