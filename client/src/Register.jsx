@@ -96,3 +96,4 @@ function Register() {
 }
 
 export default Register;
+//Register component created

@@ -29,7 +29,7 @@ function Login() {
       localStorage.setItem("token", res.data.token);
       toast.success("Login successful 💜");
 
-      // temporary redirect (no dashboard yet)
+      // later replace with dashboard
       window.location.reload();
 
     } catch (err) {
@@ -40,53 +40,64 @@ function Login() {
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-wrapper">
 
-  {/* 🔥 TOP HEADER */}
-  <h1 className="main-title">Digital Talent Management System</h1>
+      {/* 🔥 TOP HEADER */}
+      <header className="auth-header">
+        <h1>Digital Talent Management System</h1>
+        <p>Manage talent efficiently 🚀</p>
+      </header>
 
-  <div className="auth-card">
+      {/* 🔥 CARD */}
+      <div className="auth-container">
+        <div className="auth-card">
 
-    <h2>Welcome Back 💜</h2>
+          <h2>Welcome Back</h2>
+          <p className="subtitle">Login to continue</p>
 
-    <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
 
-       
+            {/* EMAIL */}
+            <div className="input-group">
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder=" "
+                onChange={handleChange}
+              />
+              <label>Email Address</label>
+            </div>
 
-          <div className="input-group">
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder=" "
-              onChange={handleChange}
-            />
-            <label>Email</label>
-          </div>
+            {/* PASSWORD */}
+            <div className="input-group password-field">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                required
+                placeholder=" "
+                onChange={handleChange}
+              />
+              <label>Password</label>
+              <span onClick={() => setShowPassword(!showPassword)}>👁️</span>
+            </div>
 
-          <div className="input-group password-field">
-            <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              required
-              placeholder=" "
-              onChange={handleChange}
-            />
-            <label>Password</label>
-            <span onClick={() => setShowPassword(!showPassword)}>👁️</span>
-          </div>
+            {/* LOGIN BUTTON */}
+            <button disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </button>
 
-          <button disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </button>
+          </form>
 
-        </form>
+          {/* FOOTER */}
+          <p className="switch-text">
+            Don’t have an account?{" "}
+            <span onClick={() => navigate("/register")}>Register</span>
+          </p>
 
-        <p onClick={() => navigate("/register")}>
-          Don't have an account? Register
-        </p>
-
+        </div>
       </div>
+
     </div>
   );
 }
