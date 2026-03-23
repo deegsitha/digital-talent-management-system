@@ -1,0 +1,136 @@
+/* ===== LAYOUT ===== */
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: 220px;
+  background: #1e1b4b;
+  color: white;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-bottom: 30px;
+  color: #c4b5fd;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.sidebar li:hover,
+.sidebar .active {
+  background: #7c3aed;
+}
+
+/* ===== MAIN ===== */
+.main {
+  flex: 1;
+  padding: 20px;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.navbar h1 {
+  font-size: 20px;
+  color: #111827;
+}
+
+.navbar button {
+  padding: 8px 14px;
+  border: none;
+  background: #7c3aed;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ===== FORM ===== */
+.task-form {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.task-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.task-form button {
+  width: 100%;
+  padding: 10px;
+  background: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+
+/* ===== TASK GRID ===== */
+.task-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+/* ===== TASK CARD ===== */
+.task-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+.task-card h4 {
+  margin-bottom: 5px;
+}
+
+.task-card p {
+  font-size: 13px;
+  color: #555;
+}
+
+/* STATUS BADGE */
+.status {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 8px;
+  background: #facc15;
+  color: #111;
+  font-size: 12px;
+  border-radius: 5px;
+}
+
+/* DELETE BUTTON */
+.task-card button {
+  margin-top: 10px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}

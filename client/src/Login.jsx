@@ -30,7 +30,7 @@ function Login() {
       toast.success("Login successful 💜");
 
       // later replace with dashboard
-      window.location.reload();
+      navigate("/dashboard")
 
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");
@@ -45,7 +45,7 @@ function Login() {
       {/* 🔥 TOP HEADER */}
       <header className="auth-header">
         <h1>Digital Talent Management System</h1>
-        <p>Manage talent efficiently 🚀</p>
+        <p>Manage talent efficiently </p>
       </header>
 
       {/* 🔥 CARD */}
@@ -93,6 +93,7 @@ function Login() {
           <p className="switch-text">
             Don’t have an account?{" "}
             <span onClick={() => navigate("/register")}>Register</span>
+           
           </p>
 
         </div>

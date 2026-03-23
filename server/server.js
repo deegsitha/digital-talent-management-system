@@ -27,3 +27,7 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 // Server connected
+const taskRoutes = require("./routes/task");
+const authMiddleware = require("./middleware/auth");
+
+app.use("/api/tasks", authMiddleware, taskRoutes);
