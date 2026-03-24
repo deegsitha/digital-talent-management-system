@@ -66,11 +66,10 @@ router.post("/login", async (req, res) => {
     }
 
     // Token
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+   const token = jwt.sign(
+  { id: user._id },   // ✅ MUST BE THIS
+  "secretkey"
+);
 
     res.json({
       message: "Login successful",

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Task = require("../models/Task");
 
+
 // ➕ CREATE TASK
 router.post("/add", async (req, res) => {
   try {
@@ -22,7 +23,7 @@ router.post("/add", async (req, res) => {
 });
 
 
-// 📋 GET ALL TASKS
+// 📋 GET TASKS
 router.get("/", async (req, res) => {
   const tasks = await Task.find({ userId: req.user.id });
   res.json(tasks);
@@ -31,13 +32,17 @@ router.get("/", async (req, res) => {
 
 // ✏️ UPDATE TASK
 router.put("/:id", async (req, res) => {
-  const updated = await Task.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }
-  );
+  try {
+    const updatedTask = await Task.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
 
-  res.json(updated);
+    res.json(updatedTask);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 

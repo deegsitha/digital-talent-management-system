@@ -9,9 +9,14 @@ module.exports = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, "secretkey");
-    req.user = decoded;
+
+    console.log("DECODED:", decoded); // ✅ debug
+
+    req.user = decoded; // ✅ IMPORTANT
+
     next();
-  } catch {
+  } catch (err) {
+    console.log(err);
     res.status(401).json({ message: "Invalid token" });
   }
 };

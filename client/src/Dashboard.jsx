@@ -9,34 +9,57 @@ function Dashboard() {
     title: "",
     description: ""
   });
+  const [editingId, setEditingId] = useState(null);
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
+  // Fetch Tasks
   const fetchTasks = async () => {
-    const res = await axios.get("http://localhost:5001/api/tasks", {
-      headers: { Authorization: token }
-    });
-    setTasks(res.data);
+    try {
+      const res = await axios.get("http://localhost:5001/api/tasks", {
+        headers: { Authorization: token }
+      });
+      setTasks(res.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {
     fetchTasks();
   }, []);
 
+  // Add / Update Task
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await axios.post(
-      "http://localhost:5001/api/tasks/add",
-      form,
-      { headers: { Authorization: token } }
-    );
+    if (!form.title || !form.description) return;
 
-    setForm({ title: "", description: "" });
-    fetchTasks();
+    try {
+      if (editingId) {
+        await axios.put(
+          `http://localhost:5001/api/tasks/${editingId}`,
+          form,
+          { headers: { Authorization: token } }
+        );
+        setEditingId(null);
+      } else {
+        await axios.post(
+          "http://localhost:5001/api/tasks/add",
+          form,
+          { headers: { Authorization: token } }
+        );
+      }
+
+      setForm({ title: "", description: "" });
+      fetchTasks();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
+  // Delete Task
   const deleteTask = async (id) => {
     await axios.delete(`http://localhost:5001/api/tasks/${id}`, {
       headers: { Authorization: token }
@@ -44,39 +67,39 @@ function Dashboard() {
     fetchTasks();
   };
 
+  // Edit Task
+  const handleEdit = (task) => {
+    setForm({
+      title: task.title,
+      description: task.description
+    });
+    setEditingId(task._id);
+  };
+
+  // Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-container">
 
-      {/* SIDEBAR */}
-      <aside className="sidebar">
-        <h2>DTMS</h2>
-        <ul>
-          <li className="active">Dashboard</li>
-          <li>Tasks</li>
-          <li>Settings</li>
-        </ul>
-      </aside>
+      {/* Top Bar */}
+      <header className="topbar">
+        <h1>Digital Talent Management System</h1>
+        <button onClick={handleLogout}>Logout</button>
+      </header>
 
-      {/* MAIN CONTENT */}
-      <div className="main">
+      <div className="main-content">
 
-        {/* NAVBAR */}
-        <div className="navbar">
-          <h1>Digital Talent Management System</h1>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
-
-        {/* TASK FORM */}
-        <div className="task-form">
-          <h3>Create Task</h3>
+        {/* Left Panel (Form) */}
+        <div className="form-section">
+          <h2>{editingId ? "Edit Task" : "Create Task"}</h2>
 
           <form onSubmit={handleSubmit}>
             <input
+              type="text"
               placeholder="Task Title"
               value={form.title}
               onChange={(e) =>
@@ -84,7 +107,7 @@ function Dashboard() {
               }
             />
 
-            <input
+            <textarea
               placeholder="Task Description"
               value={form.description}
               onChange={(e) =>
@@ -92,24 +115,40 @@ function Dashboard() {
               }
             />
 
-            <button>Add Task</button>
+            <button type="submit">
+              {editingId ? "Update Task" : "Add Task"}
+            </button>
           </form>
         </div>
 
-        {/* TASK LIST */}
-        <div className="task-grid">
-          {tasks.map((task) => (
-            <div className="task-card" key={task._id}>
-              <h4>{task.title}</h4>
-              <p>{task.description}</p>
+        {/* Right Panel (Tasks) */}
+        <div className="task-section">
+          <h2>Task List</h2>
 
-              <span className="status">Pending</span>
+          <div className="task-grid">
+            {tasks.length === 0 ? (
+              <p className="empty">No tasks available</p>
+            ) : (
+              tasks.map((task) => (
+                <div className="task-card" key={task._id}>
+                  <h3>{task.title}</h3>
+                  <p>{task.description}</p>
 
-              <button onClick={() => deleteTask(task._id)}>
-                Delete
-              </button>
-            </div>
-          ))}
+                  <div className="actions">
+                    <button onClick={() => handleEdit(task)}>
+                      Edit
+                    </button>
+                    <button
+                      className="delete"
+                      onClick={() => deleteTask(task._id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
 
       </div>

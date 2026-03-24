@@ -1,33 +1,26 @@
-require("dotenv").config();
-
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
-
-const app = express();
-
-// ✅ MIDDLEWARE (VERY IMPORTANT ORDER)
-app.use(cors());
-app.use(express.json()); // ✅ Fix for req.body undefined
-
-// Routes
-app.use("/api", authRoutes);
-
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB Connected"))
-.catch((err) => console.log(err));
-
-// Server
-const PORT = process.env.PORT || 5001;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-// Server connected
 const taskRoutes = require("./routes/task");
 const authMiddleware = require("./middleware/auth");
 
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.use("/api", authRoutes);
+
+// 🔥 TASK ROUTES
 app.use("/api/tasks", authMiddleware, taskRoutes);
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.log(err));
+
+app.listen(5001, () => {
+  console.log("Server running on port 5001");
+});
