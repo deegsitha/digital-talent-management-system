@@ -1,68 +1,73 @@
-/* RESET */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* FULL SCREEN */
-.dashboard-container {
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+body {
+  background: #f1f5f9;
   font-family: "Segoe UI", sans-serif;
-  background: #f5f7fb;
 }
 
-/* TOP BAR */
-.topbar {
+/* LAYOUT */
+.dashboard {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.header {
   height: 70px;
-  background: #1e293b;
+  background: #0f172a;
   color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 40px;
+  padding: 0 30px;
 }
 
-.topbar h1 {
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.topbar button {
-  padding: 8px 16px;
+.header button {
   background: #6366f1;
   border: none;
+  padding: 8px 16px;
   color: white;
   border-radius: 6px;
   cursor: pointer;
 }
 
-/* MAIN LAYOUT */
-.main-content {
+/* MAIN */
+.main {
   flex: 1;
   display: flex;
+  gap: 20px;
   padding: 20px;
+}
+
+/* LEFT */
+.left {
+  width: 35%;
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
-/* LEFT FORM */
-.form-section {
-  width: 30%;
+/* RIGHT */
+.right {
+  flex: 1;
+}
+
+/* CARD */
+.card {
   background: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-.form-section h2 {
-  margin-bottom: 15px;
-}
-
-.form-section input,
-.form-section textarea {
+/* FORM */
+.form-card input,
+.form-card textarea {
   width: 100%;
   padding: 10px;
   margin-bottom: 12px;
@@ -70,47 +75,32 @@
   border-radius: 6px;
 }
 
-.form-section button {
+.form-card button {
   width: 100%;
   padding: 10px;
   background: #6366f1;
-  border: none;
   color: white;
+  border: none;
   border-radius: 6px;
-  cursor: pointer;
 }
 
-/* RIGHT TASK AREA */
-.task-section {
-  flex: 1;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.task-section h2 {
-  margin-bottom: 15px;
-}
-
-/* GRID */
+/* TASK GRID */
 .task-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 15px;
 }
 
-/* CARD */
+/* TASK CARD */
 .task-card {
   padding: 15px;
-  border-radius: 8px;
   background: #f9fafb;
+  border-radius: 8px;
   border: 1px solid #e5e7eb;
 }
 
 .task-card h3 {
   font-size: 16px;
-  margin-bottom: 6px;
 }
 
 .task-card p {
@@ -129,9 +119,9 @@
   padding: 5px 10px;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
   background: #3b82f6;
   color: white;
+  cursor: pointer;
 }
 
 .actions .delete {
@@ -142,4 +132,3 @@
 .empty {
   color: #777;
 }
-/* RESPONSIVE */

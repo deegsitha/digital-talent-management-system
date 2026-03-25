@@ -3,6 +3,19 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
+// Chart
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+} from "chart.js";
+
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [form, setForm] = useState({
@@ -14,7 +27,7 @@ function Dashboard() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  // Fetch Tasks
+  // FETCH TASKS
   const fetchTasks = async () => {
     try {
       const res = await axios.get("http://localhost:5001/api/tasks", {
@@ -30,7 +43,7 @@ function Dashboard() {
     fetchTasks();
   }, []);
 
-  // Add / Update Task
+  // ADD / UPDATE
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -59,7 +72,7 @@ function Dashboard() {
     }
   };
 
-  // Delete Task
+  // DELETE
   const deleteTask = async (id) => {
     await axios.delete(`http://localhost:5001/api/tasks/${id}`, {
       headers: { Authorization: token }
@@ -67,7 +80,7 @@ function Dashboard() {
     fetchTasks();
   };
 
-  // Edit Task
+  // EDIT
   const handleEdit = (task) => {
     setForm({
       title: task.title,
@@ -76,79 +89,106 @@ function Dashboard() {
     setEditingId(task._id);
   };
 
-  // Logout
+  // LOGOUT
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
+  };
+
+  // CHART DATA
+  const chartData = {
+    labels: ["Tasks"],
+    datasets: [
+      {
+        label: "Total Tasks",
+        data: [tasks.length],
+      }
+    ]
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboard">
 
-      {/* Top Bar */}
-      <header className="topbar">
+      {/* HEADER */}
+      <header className="header">
         <h1>Digital Talent Management System</h1>
         <button onClick={handleLogout}>Logout</button>
       </header>
 
-      <div className="main-content">
+      <div className="main">
 
-        {/* Left Panel (Form) */}
-        <div className="form-section">
-          <h2>{editingId ? "Edit Task" : "Create Task"}</h2>
+        {/* LEFT SIDE */}
+        <div className="left">
 
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Task Title"
-              value={form.title}
-              onChange={(e) =>
-                setForm({ ...form, title: e.target.value })
-              }
-            />
+          {/* FORM */}
+          <div className="card form-card">
+            <h2>{editingId ? "Edit Task" : "Create Task"}</h2>
 
-            <textarea
-              placeholder="Task Description"
-              value={form.description}
-              onChange={(e) =>
-                setForm({ ...form, description: e.target.value })
-              }
-            />
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="Task Title"
+                value={form.title}
+                onChange={(e) =>
+                  setForm({ ...form, title: e.target.value })
+                }
+              />
 
-            <button type="submit">
-              {editingId ? "Update Task" : "Add Task"}
-            </button>
-          </form>
+              <textarea
+                placeholder="Task Description"
+                value={form.description}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
+              />
+
+              <button type="submit">
+                {editingId ? "Update Task" : "Add Task"}
+              </button>
+            </form>
+          </div>
+
+          {/* CHART */}
+          <div className="card chart-card">
+            <h2>Task Overview</h2>
+            <Bar data={chartData} />
+          </div>
+
         </div>
 
-        {/* Right Panel (Tasks) */}
-        <div className="task-section">
-          <h2>Task List</h2>
+        {/* RIGHT SIDE */}
+        <div className="right">
 
-          <div className="task-grid">
-            {tasks.length === 0 ? (
-              <p className="empty">No tasks available</p>
-            ) : (
-              tasks.map((task) => (
-                <div className="task-card" key={task._id}>
-                  <h3>{task.title}</h3>
-                  <p>{task.description}</p>
+          <div className="card task-card-container">
+            <h2>Task List</h2>
 
-                  <div className="actions">
-                    <button onClick={() => handleEdit(task)}>
-                      Edit
-                    </button>
-                    <button
-                      className="delete"
-                      onClick={() => deleteTask(task._id)}
-                    >
-                      Delete
-                    </button>
+            <div className="task-grid">
+              {tasks.length === 0 ? (
+                <p className="empty">No tasks available</p>
+              ) : (
+                tasks.map((task) => (
+                  <div className="task-card" key={task._id}>
+                    <h3>{task.title}</h3>
+                    <p>{task.description}</p>
+
+                    <div className="actions">
+                      <button onClick={() => handleEdit(task)}>
+                        Edit
+                      </button>
+                      <button
+                        className="delete"
+                        onClick={() => deleteTask(task._id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </div>
+
           </div>
+
         </div>
 
       </div>
