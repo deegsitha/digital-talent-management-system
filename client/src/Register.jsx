@@ -39,57 +39,64 @@ function Register() {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
+    <div className="auth-wrapper">
+      <header className="auth-header">
+        <h1>Join the Platform</h1>
+        <p>Register to get started</p>
+      </header>
 
-        <h2>Create Account 💜</h2>
+      <div className="auth-container">
+        <div className="auth-card">
 
-        <form onSubmit={handleSubmit}>
+          <h2>Create Account</h2>
 
-          <div className="input-group">
-            <input
-              type="text"
-              name="name"
-              required
-              placeholder=" "
-              onChange={handleChange}
-            />
-            <label>Full Name</label>
-          </div>
+          <form onSubmit={handleSubmit}>
 
-          <div className="input-group">
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder=" "
-              onChange={handleChange}
-            />
-            <label>Email</label>
-          </div>
+            <div className="input-group">
+              <input
+                type="text"
+                name="name"
+                required
+                placeholder=" "
+                onChange={handleChange}
+              />
+              <label>Full Name</label>
+            </div>
 
-          <div className="input-group password-field">
-            <input
-              type={showPassword ? "text" : "password"}
-              name="password"
-              required
-              placeholder=" "
-              onChange={handleChange}
-            />
-            <label>Password</label>
-            <span onClick={() => setShowPassword(!showPassword)}>👁️</span>
-          </div>
+            <div className="input-group">
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder=" "
+                onChange={handleChange}
+              />
+              <label>Email</label>
+            </div>
 
-          <button disabled={loading}>
-            {loading ? "Creating..." : "Register"}
-          </button>
+            <div className="input-group password-field">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                required
+                placeholder=" "
+                onChange={handleChange}
+              />
+              <label>Password</label>
+              <span onClick={() => setShowPassword(!showPassword)}>👁️</span>
+            </div>
 
-        </form>
+            <button disabled={loading}>
+              {loading ? "Creating..." : "Register"}
+            </button>
 
-        <p onClick={() => navigate("/login")}>
-          Already have an account? Login
-        </p>
+          </form>
 
+          <p className="switch-text" onClick={() => navigate("/login")}>
+            Already have an account? <span>Login</span>
+          </p>
+
+        </div>
       </div>
     </div>
   );
