@@ -113,7 +113,7 @@ function Dashboard() {
       status: task.status || "pending"
     });
     setEditingId(task._id);
-    toast("Editing mode active", { icon: "✏️" });
+    toast("Editing mode active");
   };
 
   // UPDATE STATUS ONLY
@@ -160,14 +160,14 @@ function Dashboard() {
         label: "Tasks by Status",
         data: [pendingCount, progressCount, completedCount],
         backgroundColor: [
-          'rgba(245, 158, 11, 0.6)', // yellow
-          'rgba(56, 189, 248, 0.6)', // blue
-          'rgba(16, 185, 129, 0.6)'  // green
+          'rgba(253, 230, 138, 0.8)', // pastel yellow
+          'rgba(191, 219, 254, 0.8)', // pastel blue
+          'rgba(167, 243, 208, 0.8)'  // pastel green
         ],
         borderColor: [
-          'rgba(245, 158, 11, 1)',
-          'rgba(56, 189, 248, 1)',
-          'rgba(16, 185, 129, 1)'
+          '#facc15',
+          '#60a5fa',
+          '#34d399'
         ],
         borderWidth: 1,
       }
@@ -177,11 +177,11 @@ function Dashboard() {
   const chartOptions = {
     responsive: true,
     scales: {
-      y: { ticks: { color: "#cbd5e1" }, grid: { color: "rgba(255,255,255,0.05)" } },
-      x: { ticks: { color: "#cbd5e1" }, grid: { display: false } }
+      y: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,0.05)" } },
+      x: { ticks: { color: "#94a3b8" }, grid: { display: false } }
     },
     plugins: {
-      legend: { labels: { color: "#f8fafc" } }
+      legend: { labels: { color: "#f8fafc", font: { family: "'Inter', sans-serif" } } }
     }
   };
 
@@ -225,7 +225,7 @@ function Dashboard() {
         {/* HEADER */}
         <header className="header">
           <div className="search-bar">
-            <span>🔍</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <input 
               type="text" 
               placeholder="Search tasks by title or description..." 
@@ -248,7 +248,7 @@ function Dashboard() {
             
             {/* ADD / EDIT TASK CARD */}
             <div className="glass-card">
-              <h2>{editingId ? "✏️ Edit Task" : "✨ Create New Task"}</h2>
+              <h2>{editingId ? "Edit Task" : "Create New Task"}</h2>
               
               <form className="task-form" onSubmit={handleSubmit}>
                 <input
@@ -265,14 +265,13 @@ function Dashboard() {
                 
                 {/* Status selector during creation/edit */}
                 <select 
-                   className="task-form" 
-                   style={{ padding: '14px 16px', background: 'rgba(15,23,42,0.5)', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                   className="task-select" 
                    value={form.status}
                    onChange={(e) => setForm({ ...form, status: e.target.value })}
                 >
-                  <option value="pending">🟡 Pending</option>
-                  <option value="in-progress">🔵 In Progress</option>
-                  <option value="completed">🟢 Completed</option>
+                  <option value="pending">Pending</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="completed">Completed</option>
                 </select>
 
                 <button type="submit" className="btn-primary">
@@ -288,7 +287,7 @@ function Dashboard() {
 
             {/* CHART CARD */}
             <div className="glass-card chart-container">
-              <h2>📊 Task Productivity</h2>
+              <h2>Task Productivity</h2>
               <Bar data={chartData} options={chartOptions} />
             </div>
 
@@ -301,13 +300,12 @@ function Dashboard() {
               <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#f8fafc" }}>
                 {statusFilter === "all" ? "All Tasks" : `${statusFilter.replace("-", " ")} tasks`}
               </h2>
-              <span style={{ color: "#94a3b8" }}>{filteredTasks.length} tasks found</span>
             </div>
 
             <div className="task-grid">
               {filteredTasks.length === 0 ? (
                 <div style={{ color: "#94a3b8", gridColumn: "1 / -1", textAlign: "center", padding: "40px", background: "rgba(255,255,255,0.02)", borderRadius: "16px" }}>
-                  <p style={{ fontSize: "40px", filter: "grayscale(1)" }}>📝</p>
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ margin: "0 auto" }}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                   <p style={{ marginTop: "10px" }}>No tasks matched your criteria.</p>
                 </div>
               ) : (
@@ -333,10 +331,10 @@ function Dashboard() {
                       
                       <div className="task-actions">
                         <button className="btn-icon edit" onClick={() => handleEdit(task)}>
-                          ✏️ Edit
+                          Edit
                         </button>
                         <button className="btn-icon delete" onClick={() => deleteTask(task._id)}>
-                          🗑️ Delete
+                          Delete
                         </button>
                       </div>
                     </div>
