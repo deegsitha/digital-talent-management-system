@@ -11,7 +11,7 @@ router.post("/register", async (req, res) => {
   try {
     console.log("BODY:", req.body); // ✅ Debug
 
-    const { name, email, password } = req.body || {};
+    const { name, email, password, role } = req.body || {};
 
     // Validation
     if (!name || !email || !password) {
@@ -31,7 +31,8 @@ router.post("/register", async (req, res) => {
     const newUser = new User({
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
+      role: role && ["admin", "user", "system_admin"].includes(role) ? role : "user"
     });
 
     await newUser.save();
@@ -67,13 +68,14 @@ router.post("/login", async (req, res) => {
 
     // Token
    const token = jwt.sign(
-  { id: user._id },   // ✅ MUST BE THIS
+  { id: user._id, role: user.role, name: user.name },   // ✅ MUST BE THIS
   "secretkey"
 );
 
     res.json({
       message: "Login successful",
-      token
+      token,
+      user: { id: user._id, name: user.name, role: user.role }
     });
 
   } catch (error) {

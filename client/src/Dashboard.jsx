@@ -22,14 +22,20 @@ function Dashboard() {
   const [form, setForm] = useState({
     title: "",
     description: "",
+    assignedTo: "",
     status: "pending"
   });
   const [editingId, setEditingId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [users, setUsers] = useState([]);
+  const [replyTexts, setReplyTexts] = useState({});
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role") || "user";
+  const userName = localStorage.getItem("userName") || "User";
 
   // Authentication Check
   useEffect(() => {
@@ -51,9 +57,23 @@ function Dashboard() {
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      const res = await axios.get("http://localhost:5001/api/tasks/users/all", {
+        headers: { Authorization: token }
+      });
+      setUsers(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
-    if (token) fetchTasks();
-  }, [token]);
+    if (token) {
+      fetchTasks();
+      if (role === 'system_admin' || role === 'admin') fetchUsers();
+    }
+  }, [token, role]);
 
   // ADD / UPDATE
   const handleSubmit = async (e) => {
@@ -82,7 +102,7 @@ function Dashboard() {
         toast.success("Task created");
       }
 
-      setForm({ title: "", description: "", status: "pending" });
+      setForm({ title: "", description: "", assignedTo: "", status: "pending" });
       fetchTasks();
     } catch (err) {
       console.log(err);
@@ -105,11 +125,27 @@ function Dashboard() {
     }
   };
 
+  // SYSTEM ADMIN - DELETE USER ENTIRELY
+  const deleteSystemUser = async (userId) => {
+    if (!window.confirm("FATAL WARNING: This will permanently wipe this User and permanently delete every single task currently assigned to them from this application. ONLY proceed if you are sure!")) return;
+    try {
+      await axios.delete(`http://localhost:5001/api/tasks/users/${userId}`, {
+        headers: { Authorization: token },
+      });
+      toast.success("User and all bound tasks completely erased.");
+      fetchUsers();
+      fetchTasks();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to erase user");
+    }
+  };
+
   // EDIT POPULATION
   const handleEdit = (task) => {
     setForm({
       title: task.title,
       description: task.description,
+      assignedTo: task.userId ? task.userId._id : "",
       status: task.status || "pending"
     });
     setEditingId(task._id);
@@ -134,8 +170,29 @@ function Dashboard() {
   // LOGOUT
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("userName");
     toast("Logged out successfully");
     navigate("/");
+  };
+
+  // SEND REPLY
+  const handleReplySubmit = async (e, taskId) => {
+    e.preventDefault();
+    const text = replyTexts[taskId];
+    if (!text) return;
+
+    try {
+      await axios.post(
+        `http://localhost:5001/api/tasks/${taskId}/reply`,
+        { text, sender: userName },
+        { headers: { Authorization: token } }
+      );
+      setReplyTexts(prev => ({ ...prev, [taskId]: "" }));
+      fetchTasks();
+    } catch (err) {
+      toast.error("Failed to post reply");
+    }
   };
 
   // FILTER & SEARCH LOGIC
@@ -188,36 +245,57 @@ function Dashboard() {
   return (
     <div className="dashboard-wrapper">
       
-      {/* SIDEBAR */}
-      <aside className="sidebar">
-        <div className="brand">
-          <h1>Digital Talent</h1>
-          <p>Management System</p>
-        </div>
+      {/* PROFESSIONAL SIDEBAR (Admin / System Admin Only) */}
+      {(role === 'admin' || role === 'system_admin') && (
+        <aside className="sidebar">
+          <div className="brand">
+            <h1>Digital Talent</h1>
+            <p>Management Platform</p>
+          </div>
 
-        <nav className="nav-menu">
-          <div className={`nav-item ${statusFilter === "all" ? "active" : ""}`} onClick={() => setStatusFilter("all")}>
-            <span>All Tasks</span>
-            <span className="badge">{tasks.length}</span>
-          </div>
-          <div className={`nav-item ${statusFilter === "pending" ? "active" : ""}`} onClick={() => setStatusFilter("pending")}>
-            <span>Pending</span>
-            <span className="badge">{pendingCount}</span>
-          </div>
-          <div className={`nav-item ${statusFilter === "in-progress" ? "active" : ""}`} onClick={() => setStatusFilter("in-progress")}>
-            <span>In Progress</span>
-            <span className="badge">{progressCount}</span>
-          </div>
-          <div className={`nav-item ${statusFilter === "completed" ? "active" : ""}`} onClick={() => setStatusFilter("completed")}>
-            <span>Completed</span>
-            <span className="badge">{completedCount}</span>
-          </div>
-        </nav>
+          <nav className="nav-menu">
+            {role === 'system_admin' ? (
+              <>
+                <div className={`nav-item ${activeTab === "dashboard" ? "active" : ""}`} onClick={() => setActiveTab("dashboard")}>
+                  <span>Analytics Center</span>
+                </div>
+                <div className={`nav-item ${activeTab === "users" ? "active" : ""}`} onClick={() => setActiveTab("users")}>
+                  <span>User Management</span>
+                </div>
+                <div className={`nav-item ${activeTab === "tasks" ? "active" : ""}`} onClick={() => setActiveTab("tasks")}>
+                  <span>Task Monitoring</span>
+                </div>
+                <div className={`nav-item ${activeTab === "settings" ? "active" : ""}`} onClick={() => setActiveTab("settings")}>
+                  <span>System Controls</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className={`nav-item ${statusFilter === "all" ? "active" : ""}`} onClick={() => setStatusFilter("all")}>
+                  <span>All Tasks</span>
+                  <span className="badge">{tasks.length}</span>
+                </div>
+                <div className={`nav-item ${statusFilter === "pending" ? "active" : ""}`} onClick={() => setStatusFilter("pending")}>
+                  <span>Pending</span>
+                  <span className="badge">{pendingCount}</span>
+                </div>
+                <div className={`nav-item ${statusFilter === "in-progress" ? "active" : ""}`} onClick={() => setStatusFilter("in-progress")}>
+                  <span>In Progress</span>
+                  <span className="badge">{progressCount}</span>
+                </div>
+                <div className={`nav-item ${statusFilter === "completed" ? "active" : ""}`} onClick={() => setStatusFilter("completed")}>
+                  <span>Completed</span>
+                  <span className="badge">{completedCount}</span>
+                </div>
+              </>
+            )}
+          </nav>
 
-        <button className="logout-btn" onClick={handleLogout}>
-          Sign Out
-        </button>
-      </aside>
+          <button className="logout-btn" onClick={handleLogout}>
+            Sign Out
+          </button>
+        </aside>
+      )}
 
       {/* MAIN CONTENT AREA */}
       <main className="main-content">
@@ -225,117 +303,273 @@ function Dashboard() {
         {/* HEADER */}
         <header className="header">
           <div className="search-bar">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A1887F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <input 
               type="text" 
-              placeholder="Search tasks by title or description..." 
+              placeholder="Search tasks..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
-          <div className="user-profile">
-            <span style={{ color: "#94a3b8" }}>Welcome Admin</span>
-            <div className="avatar">A</div>
+          <div className="user-profile" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <div className="user-info-text" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center' }}>
+              <span className="user-name" style={{ fontSize: '14px', fontWeight: '600', color: '#2C1E16' }}>Welcome, {userName}</span>
+              <span className="user-role-badge" style={{ fontSize: '11px', color: '#8D6E63', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                {role === "system_admin" ? "System Admin" : role === "admin" ? "Admin" : "User"}
+              </span>
+            </div>
+            <div className="avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#4E342E', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+              {userName.charAt(0).toUpperCase()}
+            </div>
+            <button className="logout-btn-header" onClick={handleLogout} style={{marginLeft:'8px', padding:'8px 16px', background:'#FDFCF9', border:'1px solid #D7CCC8', borderRadius:'6px', cursor:'pointer', color:'#4E342E', fontSize:'13px', fontWeight:'600', transition: 'all 0.2s ease'}}>
+              Sign Out
+            </button>
           </div>
         </header>
 
         {/* DASHBOARD GRID */}
         <section className="dashboard-body">
-          
-          {/* LEFT COL: Add Form & Stats */}
-          <div className="left-column">
-            
-            {/* ADD / EDIT TASK CARD */}
-            <div className="glass-card">
-              <h2>{editingId ? "Edit Task" : "Create New Task"}</h2>
-              
-              <form className="task-form" onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  placeholder="What needs to be done?"
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                />
-                <textarea
-                  placeholder="Task Description..."
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                />
-                
-                {/* Status selector during creation/edit */}
-                <select 
-                   className="task-select" 
-                   value={form.status}
-                   onChange={(e) => setForm({ ...form, status: e.target.value })}
-                >
-                  <option value="pending">Pending</option>
-                  <option value="in-progress">In Progress</option>
-                  <option value="completed">Completed</option>
-                </select>
 
-                <button type="submit" className="btn-primary">
-                  {editingId ? "Save Changes" : "Submit Task"}
-                </button>
-                {editingId && (
-                  <button type="button" className="btn-icon" onClick={() => { setEditingId(null); setForm({title:"", description:"", status:"pending"}); }}>
-                    Cancel
+          {/* ========================================================= */}
+          {/* TAB 1: USER MANAGEMENT (SYSTEM ADMIN)                     */}
+          {/* ========================================================= */}
+          {role === 'system_admin' && activeTab === 'users' && (
+            <div className="pro-card tab-module">
+              <h2 style={{borderBottom:'1px solid #EAE3D9', paddingBottom:'15px', marginBottom:'15px'}}>Platform Users</h2>
+              <table className="data-table">
+                <thead><tr><th style={{paddingBottom:'10px'}}>Name</th><th style={{paddingBottom:'10px'}}>Email</th><th style={{paddingBottom:'10px'}}>Role</th><th style={{paddingBottom:'10px', textAlign:'right'}}>System Action</th></tr></thead>
+                <tbody>
+                  {users.map(u => (
+                    <tr key={u._id}>
+                       <td style={{padding:'12px 10px'}}>{u.name}</td>
+                       <td style={{padding:'12px 10px'}}>{u.email}</td>
+                       <td style={{padding:'12px 10px'}}>{u.role.toUpperCase()}</td>
+                       <td style={{padding:'12px 10px', textAlign:'right'}}>
+                         {u.role !== 'system_admin' && (
+                           <button onClick={() => deleteSystemUser(u._id)} style={{background:'#FDFCF9', color:'#8D6E63', border:'1px solid #D7CCC8', padding:'6px 15px', borderRadius:'4px', cursor:'pointer', fontSize:'12px', fontWeight:'600'}}>
+                             WIPE USER
+                           </button>
+                         )}
+                       </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ========================================================= */}
+          {/* TAB 2: SYSTEM SETTINGS (SYSTEM ADMIN)                     */}
+          {/* ========================================================= */}
+          {role === 'system_admin' && activeTab === 'settings' && (
+            <div className="tab-module">
+              <h2 style={{fontSize: '20px', color: '#2C1E16', marginBottom: '20px', fontWeight: '600'}}>System Controls</h2>
+              <div className="system-controls-grid">
+                <div className="pro-card control-card"><p>Maintenance Mode</p><input type="checkbox"/></div>
+                <div className="pro-card control-card"><p>Open Enrollment</p><input type="checkbox" defaultChecked/></div>
+                <div className="pro-card control-card"><p>Force MFA</p><input type="checkbox"/></div>
+                <div className="pro-card control-card"><p>Enable Audit Logs</p><input type="checkbox" defaultChecked/></div>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================= */}
+          {/* TAB 3: DASHBOARD ANALYTICS (SYSTEM ADMIN)                 */}
+          {/* ========================================================= */}
+          {role === 'system_admin' && activeTab === 'dashboard' && (
+            <div className="tab-module">
+              <div className="system-controls-grid" style={{marginBottom:'30px'}}>
+                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start'}}>
+                  <h3 style={{fontSize:'12px', color:'#A1887F', textTransform:'uppercase'}}>Total Platform Users</h3>
+                  <p style={{fontSize:'32px', color:'#2C1E16', margin:'10px 0 0 0'}}>{users.length}</p>
+                </div>
+                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start'}}>
+                  <h3 style={{fontSize:'12px', color:'#A1887F', textTransform:'uppercase'}}>Total Global Tasks</h3>
+                  <p style={{fontSize:'32px', color:'#2C1E16', margin:'10px 0 0 0'}}>{tasks.length}</p>
+                </div>
+              </div>
+              <div className="pro-card chart-container">
+                <h2 style={{borderBottom:'none'}}>Global Task Status</h2>
+                <Bar data={chartData} options={chartOptions} />
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================= */}
+          {/* THE MAIN TASK BOARD (Users + Admins + SysAdmin Task Tab)  */}
+          {/* ========================================================= */}
+          {((role !== 'system_admin') || (role === 'system_admin' && activeTab === 'tasks')) && (
+            <div className={role === 'user' ? "full-width-feed tab-module" : "tab-module"}>
+
+          {/* TOP QUICK ADD BAR & EDIT MODAL */}
+          {(role === 'admin' || role === 'system_admin' || editingId) && (
+            <div className="quick-add-bar pro-card">
+              <h2>{editingId ? "Edit Task" : "Quick Add Task"}</h2>
+              <form className="task-form" style={{display:'grid', gridTemplateColumns:'2fr 2fr 1fr 1fr auto', gap:'15px', alignItems:'center'}} onSubmit={handleSubmit}>
+                <div className="input-group" style={{marginBottom:'0'}}>
+                  <input
+                    type="text"
+                    placeholder="Task Title..."
+                    value={form.title}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    style={{width:'100%', padding:'10px', boxSizing:'border-box'}}
+                  />
+                </div>
+                <div className="input-group" style={{marginBottom:'0'}}>
+                  <input
+                    type="text"
+                    placeholder="Short Description..."
+                    value={form.description}
+                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    style={{width:'100%', padding:'10px', boxSizing:'border-box'}}
+                  />
+                </div>
+                <div className="input-group" style={{marginBottom:'0'}}>
+                  <select 
+                     className="task-select minimal-select" 
+                     value={form.assignedTo}
+                     onChange={(e) => setForm({ ...form, assignedTo: e.target.value })}
+                     style={{width:'100%', padding:'10px', boxSizing:'border-box'}}
+                  >
+                    <option value="" disabled>Assign To...</option>
+                    {users.filter(u => u.role === 'user' || u.role === 'admin').map(u => (
+                       <option key={u._id} value={u._id}>{u.name} ({u.role})</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="input-group" style={{marginBottom:'0'}}>
+                  <select 
+                     className="task-select minimal-select" 
+                     value={form.status}
+                     onChange={(e) => setForm({ ...form, status: e.target.value })}
+                     style={{width:'100%', padding:'10px', boxSizing:'border-box'}}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="in-progress">In progress</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+                <div className="form-actions inline-actions" style={{display:'flex', gap:'10px', marginTop:'0'}}>
+                  <button type="submit" className="btn-primary" style={{padding:'10px 15px', whiteSpace:'nowrap'}}>
+                    {editingId ? "Save Edit" : "Add Task"}
                   </button>
-                )}
+                  {editingId && (
+                    <button type="button" className="btn-secondary" onClick={() => { setEditingId(null); setForm({title:"", description:"", assignedTo:"", status:"pending"}); }} style={{padding:'10px 15px', whiteSpace:'nowrap'}}>
+                      Cancel
+                    </button>
+                  )}
+                </div>
               </form>
             </div>
+          )}
+          
+          <div className={role === 'user' ? "full-width-feed" : "content-split"}>
+            {/* LEFT COL: Stats (Mid-Management Admin Only) */}
+            {role === 'admin' && (
+              <div className="left-column">
+                <div className="pro-card chart-container">
+                  <h2>Analytics Overview</h2>
+                  <Bar data={chartData} options={chartOptions} />
+                </div>
+              </div>
+            )}
 
-            {/* CHART CARD */}
-            <div className="glass-card chart-container">
-              <h2>Task Productivity</h2>
-              <Bar data={chartData} options={chartOptions} />
-            </div>
-
-          </div>
-
-          {/* RIGHT COL: Tasks Grid */}
+          {/* RIGHT COL: Task Grid */}
           <div className="right-column">
             
             <div className="task-grid-header">
-              <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#f8fafc" }}>
-                {statusFilter === "all" ? "All Tasks" : `${statusFilter.replace("-", " ")} tasks`}
-              </h2>
+              <h2>{role === "user" ? "My Assigned Tasks" : (statusFilter === "all" ? "All Tasks" : `${statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1).replace("-", " ")} Tasks`)}</h2>
             </div>
 
-            <div className="task-grid">
+            <div className="task-grid" style={role === 'user' ? {gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))'} : {}}>
               {filteredTasks.length === 0 ? (
-                <div style={{ color: "#94a3b8", gridColumn: "1 / -1", textAlign: "center", padding: "40px", background: "rgba(255,255,255,0.02)", borderRadius: "16px" }}>
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ margin: "0 auto" }}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                  <p style={{ marginTop: "10px" }}>No tasks matched your criteria.</p>
+                <div className="empty-state">
+                   <p>No tasks matched your criteria.</p>
                 </div>
               ) : (
-                filteredTasks.map((task) => {
+                filteredTasks.map((task, index) => {
                   const statusClass = (task.status === "in-progress") ? "progress" : (task.status === "completed" ? "completed" : "pending");
                   
                   return (
-                    <div className={`task-item ${statusClass}`} key={task._id}>
-                      <div className="task-header">
-                        <h3>{task.title}</h3>
-                        <select 
-                          className="status-dropdown"
-                          value={task.status || "pending"}
-                          onChange={(e) => handleStatusChange(task, e.target.value)}
-                        >
-                          <option value="pending">Pending</option>
-                          <option value="in-progress">In Progress</option>
-                          <option value="completed">Completed</option>
-                        </select>
+                    <div className={`pro-card task-card ${statusClass}`} key={task._id}>
+                      <div className="task-card-header">
+                        <div className="title-wrapper">
+                          <span className={`status-dot ${statusClass}`}></span>
+                          <h3>{task.title}</h3>
+                        </div>
+                        {role === 'user' ? (
+                           <span className={`admin-badge`} style={{margin:0, background: '#F5F5F5'}}>{task.status.toUpperCase()}</span>
+                        ) : (
+                          <select 
+                            className="status-dropdown"
+                            value={task.status || "pending"}
+                            onChange={(e) => handleStatusChange(task, e.target.value)}
+                          >
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                          </select>
+                        )}
                       </div>
                       
-                      <p>{task.description}</p>
+                      <div className="task-card-body">
+                        {(role === "admin" || role === "system_admin") && task.userId && (
+                          <div className="admin-badge">
+                            Assigned User: {task.userId.name}
+                          </div>
+                        )}
+                        <div className="description-box">
+                          <span className="desc-label">Task Description</span>
+                          <p>{task.description}</p>
+                        </div>
+                        {role === "user" && (
+                           <div className="admin-badge" style={{marginTop:'10px', display:'block', background:'transparent', border: '1px dashed #D7CCC8', textAlign:'center'}}>
+                              Created: {new Date(task.createdAt).toLocaleDateString()}
+                           </div>
+                        )}
+                      </div>
                       
-                      <div className="task-actions">
-                        <button className="btn-icon edit" onClick={() => handleEdit(task)}>
-                          Edit
-                        </button>
-                        <button className="btn-icon delete" onClick={() => deleteTask(task._id)}>
-                          Delete
-                        </button>
+                      <div className="task-card-footer">
+                        {/* THE REPLY FEED */}
+                        <div className="replies-section" style={{background:'#FDFCF9', padding:'10px', borderRadius:'6px', border:'1px solid #EAE3D9', marginBottom:'15px'}}>
+                          {task.replies && task.replies.length > 0 ? (
+                            <div className="replies-list" style={{maxHeight:'100px', overflowY:'auto', display:'flex', flexDirection:'column', gap:'5px', marginBottom:'10px'}}>
+                              {task.replies.map((reply, i) => (
+                                <div key={i} style={{fontSize:'13px', padding:'6px', background: reply.sender === userName ? '#F5F5F5' : '#FFFFFF', border:'1px solid #EAE3D9', borderRadius:'4px'}}>
+                                  <span style={{fontWeight:'600', color:'#4E342E', marginRight:'5px'}}>{reply.sender}:</span>
+                                  <span style={{color:'#5A4A42'}}>{reply.text}</span>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p style={{fontSize:'12px', color:'#A1887F', fontStyle:'italic', textAlign:'center', margin:'0 0 10px 0'}}>No status notes yet.</p>
+                          )}
+                          {role === 'user' && (
+                            <form className="reply-form" onSubmit={(e) => handleReplySubmit(e, task._id)} style={{display:'flex', gap:'5px', marginTop:'5px'}}>
+                               <input 
+                                 type="text"
+                                 placeholder="Send a status update..."
+                                 value={replyTexts[task._id] || ""}
+                                 onChange={e => setReplyTexts({...replyTexts, [task._id]: e.target.value})}
+                                 style={{flex:1, padding:'8px', border:'1px solid #D7CCC8', borderRadius:'4px', fontSize:'13px'}}
+                               />
+                               <button type="submit" style={{padding:'8px 12px', background:'#4E342E', color:'white', border:'none', borderRadius:'4px', cursor:'pointer', fontSize:'13px'}}>Send</button>
+                            </form>
+                          )}
+                        </div>
+                        
+                        {/* TASK CONTROLS */}
+                        {role !== 'user' && (
+                          <div className="task-actions-box" style={{display:'flex', gap:'10px', width:'100%', background:'#FAFAF8', border:'1px solid #EAE3D9', borderRadius:'6px', padding:'10px', marginTop:'15px'}}>
+                            <button className="btn-action edit" onClick={() => handleEdit(task)} style={{flex:1, display:'flex', justifyContent:'center'}}>
+                              Edit Task
+                            </button>
+                            <button className="btn-action delete" onClick={() => deleteTask(task._id)} style={{flex:1, display:'flex', justifyContent:'center'}}>
+                              Delete
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
@@ -344,6 +578,9 @@ function Dashboard() {
             </div>
 
           </div>
+          </div>
+          </div>
+          )}
         </section>
 
       </main>

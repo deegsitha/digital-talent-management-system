@@ -10,7 +10,8 @@ function Register() {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
+    role: "user"
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -90,6 +91,20 @@ function Register() {
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 )}
               </span>
+            </div>
+
+            <div className="input-group">
+              <select 
+                name="role" 
+                value={form.role}
+                onChange={handleChange}
+                className="role-select"
+              >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+                <option value="system_admin">System Admin</option>
+              </select>
+              <label>Account Type</label>
             </div>
 
             <button disabled={loading}>

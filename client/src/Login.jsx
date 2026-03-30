@@ -27,6 +27,8 @@ function Login() {
       const res = await axios.post("http://localhost:5001/api/login", form);
 
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.user.role);
+      localStorage.setItem("userName", res.data.user.name);
       toast.success("Login successful");
 
       // later replace with dashboard
