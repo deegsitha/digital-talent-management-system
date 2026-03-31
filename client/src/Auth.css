@@ -6,9 +6,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #FDFCF9; /* Very clean premium cream */
+  background: #F8FAFC; /* Slate 50 */
   font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
-  color: #3E2723; /* Deep Espresso */
+  color: #0F172A; /* Slate 900 */
   position: relative;
 }
 
@@ -20,7 +20,7 @@
   left: 0;
   width: 100%;
   height: 40vh;
-  background: linear-gradient(180deg, #F4EFEB 0%, rgba(244, 239, 235, 0) 100%);
+  background: linear-gradient(180deg, #F1F5F9 0%, rgba(241, 245, 249, 0) 100%);
   z-index: 0;
   pointer-events: none;
 }
@@ -36,14 +36,14 @@
 .auth-header h1 {
   font-size: 32px;
   font-weight: 700;
-  color: #2C1E16; /* Deepest Espresso */
+  color: #0F172A; /* Slate 900 */
   margin: 0;
   letter-spacing: -0.5px;
 }
 
 .auth-header p {
   font-size: 15px;
-  color: #8D6E63; /* Hazelnut */
+  color: #64748B; /* Slate 500 */
   margin-top: 10px;
   font-weight: 500;
   letter-spacing: 0.2px;
@@ -68,8 +68,8 @@
   /* Editorial / Structural Alignment */
   border-radius: 8px; /* Sharp, premium corners */
   background: #FFFFFF;
-  border: 1px solid #EAE3D9; /* Very thin, structural latte border */
-  box-shadow: 0 10px 40px -10px rgba(62, 39, 35, 0.05); /* Extremely soft, almost invisible shadow */
+  border: 1px solid #E2E8F0; /* Slate 200 */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
   
   text-align: left; /* Moving to left-aligned for an editorial feel */
   animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -84,13 +84,13 @@
 .auth-card h2 {
   font-size: 24px;
   margin-bottom: 8px;
-  color: #2C1E16;
+  color: #0F172A;
   font-weight: 700;
 }
 
 .subtitle {
   font-size: 14px;
-  color: #8D6E63;
+  color: #64748B;
   margin-bottom: 40px;
   font-weight: 400;
 }
@@ -107,9 +107,9 @@
   width: 100%;
   padding: 16px 0; /* No side padding, bottom border style */
   border: none;
-  border-bottom: 1px solid #D7CCC8; /* Soft brown underline */
+  border-bottom: 1px solid #E2E8F0; /* Slate 200 */
   background: transparent;
-  color: #3E2723;
+  color: #0F172A;
   outline: none;
   font-size: 15px;
   font-weight: 500;
@@ -128,7 +128,7 @@
   position: absolute;
   left: 0;
   top: 16px;
-  color: #A1887F;
+  color: #94A3B8;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
   font-size: 15px;
@@ -141,7 +141,7 @@
   top: -10px;
   left: 0;
   font-size: 12px;
-  color: #8D6E63;
+  color: #2563EB; /* Blue 600 */
   font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -149,8 +149,8 @@
 
 /* FOCUS EFFECT */
 .input-group input:focus {
-  border-bottom-color: #5D4037; /* Darker brown focus */
-  box-shadow: 0 1px 0 #5D4037; /* Crisp highlight */
+  border-bottom-color: #2563EB; /* Blue focus */
+  box-shadow: 0 1px 0 #2563EB;
 }
 
 /* PASSWORD ICON */
@@ -159,7 +159,7 @@
   right: 0;
   top: 16px;
   cursor: pointer;
-  color: #A1887F;
+  color: #94A3B8;
   transition: color 0.2s;
   display: flex;
   align-items: center;
@@ -167,7 +167,7 @@
 }
 
 .password-toggle:hover {
-  color: #5D4037;
+  color: #2563EB;
 }
 
 /* ===== BUTTON ===== */
@@ -175,8 +175,8 @@
   width: 100%;
   padding: 16px;
   margin-top: 25px;
-  background: #4E342E; /* Deep Mocha */
-  color: #FDFCF9;
+  background: #2563EB; /* Blue 600 */
+  color: #FFFFFF;
   border: none;
   border-radius: 4px; /* Sharp, minimal radius */
   cursor: pointer;
@@ -185,38 +185,38 @@
   font-size: 15px;
   letter-spacing: 0.5px;
   font-family: inherit;
-  box-shadow: 0 4px 12px rgba(78, 52, 46, 0.2);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 .auth-card button:hover:not(:disabled) {
-  background: #3E2723; /* Even darker Espresso on hover */
+  background: #1D4ED8; /* Darker Blue on hover */
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(62, 39, 35, 0.3);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
 }
 
 .auth-card button:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(62, 39, 35, 0.2);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
 }
 
 .auth-card button:disabled {
-  background: #D7CCC8;
+  background: #CBD5E1;
   box-shadow: none;
   cursor: not-allowed;
-  color: #FDFCF9;
+  color: #FFFFFF;
 }
 
 /* ===== SWITCH TEXT ===== */
 .switch-text {
   margin-top: 35px;
   font-size: 14px;
-  color: #8D6E63;
+  color: #64748B;
   font-weight: 500;
   text-align: center;
 }
 
 .switch-text span {
-  color: #4E342E;
+  color: #2563EB;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s;
@@ -225,8 +225,8 @@
 }
 
 .switch-text span:hover {
-  color: #2C1E16;
-  border-bottom-color: #2C1E16;
+  color: #1D4ED8;
+  border-bottom-color: #1D4ED8;
 }
 
 /* ===== RESPONSIVE ===== */
