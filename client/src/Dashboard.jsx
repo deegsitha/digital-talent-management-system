@@ -209,6 +209,8 @@ function Dashboard() {
   const pendingCount = tasks.filter(t => (t.status || "pending") === "pending").length;
   const progressCount = tasks.filter(t => t.status === "in-progress").length;
   const completedCount = tasks.filter(t => t.status === "completed").length;
+  const totalTasks = tasks.length;
+  const completionRate = totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
 
   const chartData = {
     labels: ["Pending", "In Progress", "Completed"],
@@ -217,14 +219,14 @@ function Dashboard() {
         label: "Tasks by Status",
         data: [pendingCount, progressCount, completedCount],
         backgroundColor: [
-          'rgba(253, 230, 138, 0.8)', // pastel yellow
-          'rgba(191, 219, 254, 0.8)', // pastel blue
-          'rgba(167, 243, 208, 0.8)'  // pastel green
+          '#FBBF24', // Bright Yellow
+          '#06B6D4', // Bright Cyan
+          '#10B981'  // Bright Emerald
         ],
         borderColor: [
-          '#facc15',
-          '#60a5fa',
-          '#34d399'
+          '#D97706',
+          '#0891B2',
+          '#059669'
         ],
         borderWidth: 1,
       }
@@ -248,9 +250,9 @@ function Dashboard() {
       {/* PROFESSIONAL SIDEBAR (Admin / System Admin Only) */}
       {(role === 'admin' || role === 'system_admin') && (
         <aside className="sidebar">
-          <div className="brand">
-            <h1>Digital Talent</h1>
-            <p>Management Platform</p>
+          <div className="brand" style={{ background: role === 'system_admin' ? 'linear-gradient(135deg, #8B5CF6, #EC4899)' : 'linear-gradient(135deg, #6366F1, #06B6D4)', padding: '20px', borderRadius: '12px', marginBottom: '25px', color: 'white' }}>
+            <h1 style={{ color: 'white' }}>Digital Talent</h1>
+            <p style={{ color: 'rgba(255,255,255,0.8)' }}>Management Platform</p>
           </div>
 
           <nav className="nav-menu">
@@ -315,7 +317,16 @@ function Dashboard() {
           <div className="user-profile" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             <div className="user-info-text" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center' }}>
               <span className="user-name" style={{ fontSize: '14px', fontWeight: '600', color: '#2C1E16' }}>Welcome, {userName}</span>
-              <span className="user-role-badge" style={{ fontSize: '11px', color: '#8D6E63', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <span className="user-role-badge" style={{ 
+                fontSize: '11px', 
+                color: 'white', 
+                background: role === 'system_admin' ? 'linear-gradient(90deg, #F59E0B, #EF4444)' : role === 'admin' ? 'linear-gradient(90deg, #6366F1, #EC4899)' : 'linear-gradient(90deg, #06B6D4, #10B981)',
+                padding: '2px 10px',
+                borderRadius: '50px',
+                textTransform: 'uppercase', 
+                letterSpacing: '1px',
+                fontWeight: '800'
+              }}>
                 {role === "system_admin" ? "System Admin" : role === "admin" ? "Admin" : "User"}
               </span>
             </div>
@@ -384,9 +395,13 @@ function Dashboard() {
                   <h3 style={{fontSize:'12px', color:'#A1887F', textTransform:'uppercase'}}>Total Platform Users</h3>
                   <p style={{fontSize:'32px', color:'#2C1E16', margin:'10px 0 0 0'}}>{users.length}</p>
                 </div>
-                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start'}}>
-                  <h3 style={{fontSize:'12px', color:'#A1887F', textTransform:'uppercase'}}>Total Global Tasks</h3>
-                  <p style={{fontSize:'32px', color:'#2C1E16', margin:'10px 0 0 0'}}>{tasks.length}</p>
+                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid #6366F1'}}>
+                  <h3 style={{fontSize:'12px', color:'#6366F1', textTransform:'uppercase', fontWeight: '800'}}>Global Tasks</h3>
+                  <p style={{fontSize:'36px', color:'#1E1B4B', margin:'10px 0 0 0', fontWeight: '900'}}>{totalTasks}</p>
+                </div>
+                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid #10B981'}}>
+                  <h3 style={{fontSize:'12px', color:'#10B981', textTransform:'uppercase', fontWeight: '800'}}>Completion Rate</h3>
+                  <p style={{fontSize:'36px', color:'#111827', margin:'10px 0 0 0', fontWeight: '900'}}>{completionRate}%</p>
                 </div>
               </div>
               <div className="pro-card chart-container">
@@ -469,7 +484,17 @@ function Dashboard() {
             {role === 'admin' && (
               <div className="left-column">
                 <div className="pro-card chart-container">
-                  <h2>Analytics Overview</h2>
+                  <h2 style={{ color: '#6366F1' }}>Analytics Overview</h2>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
+                     <div style={{ background: '#F0F9FF', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid #E0F2FE' }}>
+                        <p style={{ fontSize: '11px', color: '#0369A1', fontWeight: '800', textTransform: 'uppercase' }}>Scope</p>
+                        <p style={{ fontSize: '24px', fontWeight: '900', color: '#1E1B4B' }}>{totalTasks}</p>
+                     </div>
+                     <div style={{ background: '#F0FDF4', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid #DCFCE7' }}>
+                        <p style={{ fontSize: '11px', color: '#15803D', fontWeight: '800', textTransform: 'uppercase' }}>Efficiency</p>
+                        <p style={{ fontSize: '24px', fontWeight: '900', color: '#1E1B4B' }}>{completionRate}%</p>
+                     </div>
+                  </div>
                   <Bar data={chartData} options={chartOptions} />
                 </div>
               </div>
@@ -498,19 +523,23 @@ function Dashboard() {
                           <span className={`status-dot ${statusClass}`}></span>
                           <h3>{task.title}</h3>
                         </div>
-                        {role === 'user' ? (
-                           <span className={`admin-badge`} style={{margin:0, background: '#F5F5F5'}}>{task.status.toUpperCase()}</span>
-                        ) : (
-                          <select 
-                            className="status-dropdown"
-                            value={task.status || "pending"}
-                            onChange={(e) => handleStatusChange(task, e.target.value)}
-                          >
-                            <option value="pending">Pending</option>
-                            <option value="in-progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                          </select>
-                        )}
+                        <select 
+                          className="status-dropdown"
+                          value={task.status || "pending"}
+                          style={{
+                            background: task.status === 'completed' ? '#10B981' : task.status === 'in-progress' ? '#06B6D4' : '#F59E0B',
+                            color: 'white',
+                            fontWeight: '700',
+                            border: 'none',
+                            padding: '4px 12px',
+                            borderRadius: '50px'
+                          }}
+                          onChange={(e) => handleStatusChange(task, e.target.value)}
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="in-progress">In Progress</option>
+                          <option value="completed">Completed</option>
+                        </select>
                       </div>
                       
                       <div className="task-card-body">
@@ -589,3 +618,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+//Adding task status

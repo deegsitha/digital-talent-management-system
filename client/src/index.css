@@ -1,14 +1,16 @@
 :root {
-  --text: #475569; /* Slate 600 */
-  --text-h: #0F172A; /* Slate 900 */
-  --bg: #F8FAFC; /* Slate 50 */
-  --border: #E2E8F0; /* Slate 200 */
-  --code-bg: #F1F5F9;
-  --accent: #2563EB; /* Blue 600 */
-  --accent-bg: rgba(37, 99, 235, 0.1);
-  --accent-border: rgba(37, 99, 235, 0.4);
-  --social-bg: rgba(255, 255, 255, 0.8);
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --text: #334155; /* Cool Gray 700 */
+  --text-h: #1E1B4B; /* Deep Indigo 950 */
+  --bg: #F0F9FF; /* Light Cyan 50 - Very bright and fresh */
+  --border: #E0F2FE; /* Light Cyan 100 */
+  --code-bg: #E0F2FE;
+  --accent: #6366F1; /* Electric Indigo 500 */
+  --accent-2: #06B6D4; /* Bright Cyan 500 */
+  --accent-3: #F43F5E; /* Rose/Hot Pink 500 */
+  --accent-bg: rgba(99, 102, 241, 0.1);
+  --accent-border: rgba(99, 102, 241, 0.4);
+  --social-bg: rgba(255, 255, 255, 0.9);
+  --shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1), 0 4px 6px -4px rgba(99, 102, 241, 0.1);
 
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
   --heading: 'Outfit', 'Inter', system-ui, sans-serif;
