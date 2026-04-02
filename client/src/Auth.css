@@ -20,7 +20,7 @@
   left: -10%;
   width: 120%;
   height: 50vh;
-  background: linear-gradient(135deg, #EC4899 0%, #F59E0B 50%, #06B6D4 100%);
+  background: linear-gradient(135deg, #800000 0%, #A52A2A 50%, #B22222 100%);
   opacity: 0.15;
   filter: blur(80px);
   z-index: 0;
@@ -38,7 +38,7 @@
 .auth-header h1 {
   font-size: 38px;
   font-weight: 800;
-  background: linear-gradient(to right, #EC4899, #6366F1);
+  background: linear-gradient(to right, #B22222, #800000);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -72,8 +72,8 @@
   
   border-radius: 20px; /* Softer, modern radius */
   background: #FFFFFF;
-  border: 1px solid #E0F2FE;
-  box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.25);
+  border: 1px solid #F5E6E6;
+  box-shadow: 0 25px 50px -12px rgba(128, 0, 0, 0.25);
   
   text-align: left;
   animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -145,7 +145,7 @@
   top: -10px;
   left: 0;
   font-size: 12px;
-  color: #EC4899; /* Hot Pink */
+  color: #800000; /* Maroon */
   font-weight: 700;
   letter-spacing: 0.8px;
   text-transform: uppercase;
@@ -153,8 +153,8 @@
 
 /* FOCUS EFFECT */
 .input-group input:focus {
-  border-bottom-color: #EC4899; /* Pink focus */
-  box-shadow: 0 1px 0 #EC4899;
+  border-bottom-color: #800000; /* Maroon focus */
+  box-shadow: 0 1px 0 #800000;
 }
 
 /* PASSWORD ICON */
@@ -171,7 +171,7 @@
 }
 
 .password-toggle:hover {
-  color: #2563EB;
+  color: #800000;
 }
 
 /* ===== BUTTON ===== */
@@ -179,7 +179,7 @@
   width: 100%;
   padding: 16px;
   margin-top: 25px;
-  background: linear-gradient(135deg, #6366F1 0%, #EC4899 100%);
+  background: linear-gradient(135deg, #800000 0%, #B22222 100%);
   color: #FFFFFF;
   border: none;
   border-radius: 12px;
@@ -189,18 +189,18 @@
   font-size: 16px;
   letter-spacing: 1px;
   font-family: inherit;
-  box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 10px 15px -3px rgba(128, 0, 0, 0.4);
 }
 
 .auth-card button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #4F46E5 0%, #D946EF 100%);
+  background: linear-gradient(135deg, #660000 0%, #A52A2A 100%);
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 20px 25px -5px rgba(128, 0, 0, 0.5);
 }
 
 .auth-card button:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 2px 8px rgba(128, 0, 0, 0.2);
 }
 
 .auth-card button:disabled {
@@ -220,7 +220,7 @@
 }
 
 .switch-text span {
-  color: #2563EB;
+  color: #800000;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s;
@@ -229,8 +229,8 @@
 }
 
 .switch-text span:hover {
-  color: #1D4ED8;
-  border-bottom-color: #1D4ED8;
+  color: #660000;
+  border-bottom-color: #660000;
 }
 
 /* ===== RESPONSIVE ===== */

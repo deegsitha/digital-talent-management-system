@@ -102,7 +102,6 @@ function Register() {
               >
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
-                <option value="system_admin">System Admin</option>
               </select>
               <label>Account Type</label>
             </div>

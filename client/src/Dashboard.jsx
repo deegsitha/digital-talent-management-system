@@ -219,14 +219,14 @@ function Dashboard() {
         label: "Tasks by Status",
         data: [pendingCount, progressCount, completedCount],
         backgroundColor: [
-          '#FBBF24', // Bright Yellow
-          '#06B6D4', // Bright Cyan
-          '#10B981'  // Bright Emerald
+          '#EF4444', // Red-400
+          '#B22222', // Firebrick
+          '#800000'  // Maroon
         ],
         borderColor: [
-          '#D97706',
-          '#0891B2',
-          '#059669'
+          '#B91C1C',
+          '#8B0000',
+          '#4A0404'
         ],
         borderWidth: 1,
       }
@@ -250,7 +250,7 @@ function Dashboard() {
       {/* PROFESSIONAL SIDEBAR (Admin / System Admin Only) */}
       {(role === 'admin' || role === 'system_admin') && (
         <aside className="sidebar">
-          <div className="brand" style={{ background: role === 'system_admin' ? 'linear-gradient(135deg, #8B5CF6, #EC4899)' : 'linear-gradient(135deg, #6366F1, #06B6D4)', padding: '20px', borderRadius: '12px', marginBottom: '25px', color: 'white' }}>
+          <div className="brand" style={{ background: 'linear-gradient(135deg, #800000, #B22222)', padding: '20px', borderRadius: '12px', marginBottom: '25px', color: 'white' }}>
             <h1 style={{ color: 'white' }}>Digital Talent</h1>
             <p style={{ color: 'rgba(255,255,255,0.8)' }}>Management Platform</p>
           </div>
@@ -320,7 +320,7 @@ function Dashboard() {
               <span className="user-role-badge" style={{ 
                 fontSize: '11px', 
                 color: 'white', 
-                background: role === 'system_admin' ? 'linear-gradient(90deg, #F59E0B, #EF4444)' : role === 'admin' ? 'linear-gradient(90deg, #6366F1, #EC4899)' : 'linear-gradient(90deg, #06B6D4, #10B981)',
+                background: role === 'system_admin' ? 'linear-gradient(90deg, #660000, #A52A2A)' : role === 'admin' ? 'linear-gradient(90deg, #800000, #B22222)' : 'linear-gradient(90deg, #990000, #CC3333)',
                 padding: '2px 10px',
                 borderRadius: '50px',
                 textTransform: 'uppercase', 
@@ -395,12 +395,12 @@ function Dashboard() {
                   <h3 style={{fontSize:'12px', color:'#A1887F', textTransform:'uppercase'}}>Total Platform Users</h3>
                   <p style={{fontSize:'32px', color:'#2C1E16', margin:'10px 0 0 0'}}>{users.length}</p>
                 </div>
-                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid #6366F1'}}>
-                  <h3 style={{fontSize:'12px', color:'#6366F1', textTransform:'uppercase', fontWeight: '800'}}>Global Tasks</h3>
+                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid #800000'}}>
+                  <h3 style={{fontSize:'12px', color:'#800000', textTransform:'uppercase', fontWeight: '800'}}>Global Tasks</h3>
                   <p style={{fontSize:'36px', color:'#1E1B4B', margin:'10px 0 0 0', fontWeight: '900'}}>{totalTasks}</p>
                 </div>
-                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid #10B981'}}>
-                  <h3 style={{fontSize:'12px', color:'#10B981', textTransform:'uppercase', fontWeight: '800'}}>Completion Rate</h3>
+                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid #A52A2A'}}>
+                  <h3 style={{fontSize:'12px', color:'#A52A2A', textTransform:'uppercase', fontWeight: '800'}}>Completion Rate</h3>
                   <p style={{fontSize:'36px', color:'#111827', margin:'10px 0 0 0', fontWeight: '900'}}>{completionRate}%</p>
                 </div>
               </div>
@@ -484,14 +484,14 @@ function Dashboard() {
             {role === 'admin' && (
               <div className="left-column">
                 <div className="pro-card chart-container">
-                  <h2 style={{ color: '#6366F1' }}>Analytics Overview</h2>
+                  <h2 style={{ color: '#800000' }}>Analytics Overview</h2>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
-                     <div style={{ background: '#F0F9FF', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid #E0F2FE' }}>
-                        <p style={{ fontSize: '11px', color: '#0369A1', fontWeight: '800', textTransform: 'uppercase' }}>Scope</p>
+                     <div style={{ background: '#FFF0F5', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid #F5E6E6' }}>
+                        <p style={{ fontSize: '11px', color: '#800000', fontWeight: '800', textTransform: 'uppercase' }}>Scope</p>
                         <p style={{ fontSize: '24px', fontWeight: '900', color: '#1E1B4B' }}>{totalTasks}</p>
                      </div>
-                     <div style={{ background: '#F0FDF4', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid #DCFCE7' }}>
-                        <p style={{ fontSize: '11px', color: '#15803D', fontWeight: '800', textTransform: 'uppercase' }}>Efficiency</p>
+                     <div style={{ background: '#FFF5F5', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid #FFE3E3' }}>
+                        <p style={{ fontSize: '11px', color: '#B22222', fontWeight: '800', textTransform: 'uppercase' }}>Efficiency</p>
                         <p style={{ fontSize: '24px', fontWeight: '900', color: '#1E1B4B' }}>{completionRate}%</p>
                      </div>
                   </div>
@@ -527,7 +527,7 @@ function Dashboard() {
                           className="status-dropdown"
                           value={task.status || "pending"}
                           style={{
-                            background: task.status === 'completed' ? '#10B981' : task.status === 'in-progress' ? '#06B6D4' : '#F59E0B',
+                            background: task.status === 'completed' ? '#800000' : task.status === 'in-progress' ? '#B22222' : '#EF4444',
                             color: 'white',
                             fontWeight: '700',
                             border: 'none',

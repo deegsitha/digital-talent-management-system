@@ -4,13 +4,13 @@
   --bg: #F0F9FF; /* Light Cyan 50 - Very bright and fresh */
   --border: #E0F2FE; /* Light Cyan 100 */
   --code-bg: #E0F2FE;
-  --accent: #6366F1; /* Electric Indigo 500 */
-  --accent-2: #06B6D4; /* Bright Cyan 500 */
-  --accent-3: #F43F5E; /* Rose/Hot Pink 500 */
-  --accent-bg: rgba(99, 102, 241, 0.1);
-  --accent-border: rgba(99, 102, 241, 0.4);
+  --accent: #800000; /* Maroon */
+  --accent-2: #A52A2A; /* Brown/Light Maroon */
+  --accent-3: #B22222; /* Firebrick */
+  --accent-bg: rgba(128, 0, 0, 0.1);
+  --accent-border: rgba(128, 0, 0, 0.4);
   --social-bg: rgba(255, 255, 255, 0.9);
-  --shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1), 0 4px 6px -4px rgba(99, 102, 241, 0.1);
+  --shadow: 0 10px 15px -3px rgba(128, 0, 0, 0.1), 0 4px 6px -4px rgba(128, 0, 0, 0.1);
 
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
   --heading: 'Outfit', 'Inter', system-ui, sans-serif;

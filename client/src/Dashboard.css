@@ -12,13 +12,13 @@
 /* ===== SIDEBAR ===== */
 .sidebar {
   width: 260px;
-  background: linear-gradient(180deg, #1E1B4B 0%, #312E81 100%); /* Deep Indigo Vibrant Gradient */
-  border-right: 1px solid rgba(99, 102, 241, 0.2);
+  background: linear-gradient(180deg, #4A0404 0%, #800000 100%); /* Deep Maroon Gradient */
+  border-right: 1px solid rgba(128, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   padding: 30px 20px;
   z-index: 20;
-  box-shadow: 10px 0 30px rgba(30, 27, 75, 0.2);
+  box-shadow: 10px 0 30px rgba(60, 0, 0, 0.2);
 }
 
 .brand {
@@ -68,10 +68,10 @@
 }
 
 .nav-item.active {
-  background: linear-gradient(90deg, #6366F1 0%, #8B5CF6 100%); /* Bright Indigo to Violet */
+  background: linear-gradient(90deg, #800000 0%, #B22222 100%); /* Maroon Gradient */
   color: #FFFFFF;
   font-weight: 700;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 12px rgba(128, 0, 0, 0.4);
 }
 
 .badge {
@@ -85,7 +85,7 @@
 
 .nav-item.active .badge {
   background: #FFFFFF;
-  color: #2563EB;
+  color: #800000;
 }
 
 .logout-btn {
@@ -102,9 +102,9 @@
 }
 
 .logout-btn:hover {
-  border-color: #3B82F6;
+  border-color: #800000;
   color: #FFFFFF;
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(128, 0, 0, 0.1);
 }
 
 /* ===== MAIN CONTENT AREA ===== */
@@ -143,9 +143,9 @@
 }
 
 .search-bar:focus-within {
-  border-color: #3B82F6;
+  border-color: #800000;
   background: #FFFFFF;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.1);
 }
 
 .search-bar svg {
@@ -188,7 +188,7 @@
   font-size: 11px;
   font-weight: 800;
   color: #FFFFFF;
-  background: linear-gradient(135deg, #EC4899 0%, #6366F1 100%);
+  background: linear-gradient(135deg, #B22222 0%, #800000 100%);
   padding: 2px 8px;
   border-radius: 100px;
   text-transform: uppercase;
@@ -283,10 +283,10 @@
 /* ===== PROFESSIONAL CARDS ===== */
 .pro-card {
   background: #FFFFFF;
-  border: 1px solid #E0F2FE;
+  border: 1px solid #F5E6E6;
   border-radius: 16px; /* Larger radius for modern look */
   padding: 24px;
-  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.1), 0 8px 10px -6px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 10px 25px -5px rgba(128, 0, 0, 0.1), 0 8px 10px -6px rgba(128, 0, 0, 0.1);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -340,9 +340,9 @@
 .task-form input:focus,
 .task-form textarea:focus,
 .task-select:focus {
-  border-color: #3B82F6;
+  border-color: #800000;
   background: #FFFFFF;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.1);
 }
 
 .form-actions {
@@ -352,7 +352,7 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #6366F1 0%, #06B6D4 100%); /* Indigo to Cyan */
+  background: linear-gradient(135deg, #800000 0%, #B22222 100%); /* Maroon */
   color: #FFFFFF;
   border: none;
   padding: 10px 16px;
@@ -362,12 +362,12 @@
   cursor: pointer;
   flex: 1;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 12px rgba(128, 0, 0, 0.3);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 8px 20px rgba(128, 0, 0, 0.4);
 }
 
 .btn-secondary {
@@ -441,9 +441,9 @@
   flex-shrink: 0;
 }
 
-.status-dot.pending { background: #F59E0B; }
-.status-dot.progress { background: #06B6D4; } /* Bright Cyan */
-.status-dot.completed { background: #10B981; } /* Bright Emerald */
+.status-dot.pending { background: #EF4444; } /* Red-400 */
+.status-dot.progress { background: #B22222; } /* Firebrick */
+.status-dot.completed { background: #800000; } /* Maroon */
 
 .task-card h3 {
   font-size: 15px;
