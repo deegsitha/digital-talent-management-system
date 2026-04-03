@@ -23,7 +23,9 @@ function Dashboard() {
     title: "",
     description: "",
     assignedTo: "",
-    status: "pending"
+    status: "pending",
+    priority: "medium",
+    dueDate: ""
   });
   const [editingId, setEditingId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -80,7 +82,7 @@ function Dashboard() {
     e.preventDefault();
 
     if (!form.title || !form.description) {
-      toast.error("Please fill out all fields");
+      toast.error("Please fill out required fields");
       return;
     }
 
@@ -102,7 +104,7 @@ function Dashboard() {
         toast.success("Task created");
       }
 
-      setForm({ title: "", description: "", assignedTo: "", status: "pending" });
+      setForm({ title: "", description: "", assignedTo: "", status: "pending", priority: "medium", dueDate: "" });
       fetchTasks();
     } catch (err) {
       console.log(err);
@@ -146,7 +148,9 @@ function Dashboard() {
       title: task.title,
       description: task.description,
       assignedTo: task.userId ? task.userId._id : "",
-      status: task.status || "pending"
+      status: task.status || "pending",
+      priority: task.priority || "medium",
+      dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : ""
     });
     setEditingId(task._id);
     toast("Editing mode active");
@@ -219,14 +223,14 @@ function Dashboard() {
         label: "Tasks by Status",
         data: [pendingCount, progressCount, completedCount],
         backgroundColor: [
-          '#EF4444', // Red-400
-          '#B22222', // Firebrick
-          '#800000'  // Maroon
+          'rgba(234, 179, 8, 0.8)',  // Yellow
+          'rgba(0, 200, 150, 0.8)', // Orange
+          'rgba(16, 185, 129, 0.8)'  // Green
         ],
         borderColor: [
-          '#B91C1C',
-          '#8B0000',
-          '#4A0404'
+          '#ca8a04',
+          '#00C896',
+          '#059669'
         ],
         borderWidth: 1,
       }
@@ -236,11 +240,11 @@ function Dashboard() {
   const chartOptions = {
     responsive: true,
     scales: {
-      y: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(255,255,255,0.05)" } },
-      x: { ticks: { color: "#94a3b8" }, grid: { display: false } }
+      y: { ticks: { color: "#888888" }, grid: { color: "rgba(255,255,255,0.05)" } },
+      x: { ticks: { color: "#888888" }, grid: { display: false } }
     },
     plugins: {
-      legend: { labels: { color: "#f8fafc", font: { family: "'Inter', sans-serif" } } }
+      legend: { labels: { color: "#ffffff", font: { family: "'Inter', sans-serif" } } }
     }
   };
 
@@ -250,9 +254,9 @@ function Dashboard() {
       {/* PROFESSIONAL SIDEBAR (Admin / System Admin Only) */}
       {(role === 'admin' || role === 'system_admin') && (
         <aside className="sidebar">
-          <div className="brand" style={{ background: 'linear-gradient(135deg, #800000, #B22222)', padding: '20px', borderRadius: '12px', marginBottom: '25px', color: 'white' }}>
-            <h1 style={{ color: 'white' }}>Digital Talent</h1>
-            <p style={{ color: 'rgba(255,255,255,0.8)' }}>Management Platform</p>
+          <div className="brand">
+            <h1>Digital Talent</h1>
+            <p>Management Platform</p>
           </div>
 
           <nav className="nav-menu">
@@ -305,7 +309,8 @@ function Dashboard() {
         {/* HEADER */}
         <header className="header">
           <div className="search-bar">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A1887F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            {/* Search Icon */}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <input 
               type="text" 
               placeholder="Search tasks..." 
@@ -314,26 +319,17 @@ function Dashboard() {
             />
           </div>
 
-          <div className="user-profile" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <div className="user-info-text" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center' }}>
-              <span className="user-name" style={{ fontSize: '14px', fontWeight: '600', color: '#2C1E16' }}>Welcome, {userName}</span>
-              <span className="user-role-badge" style={{ 
-                fontSize: '11px', 
-                color: 'white', 
-                background: role === 'system_admin' ? 'linear-gradient(90deg, #660000, #A52A2A)' : role === 'admin' ? 'linear-gradient(90deg, #800000, #B22222)' : 'linear-gradient(90deg, #990000, #CC3333)',
-                padding: '2px 10px',
-                borderRadius: '50px',
-                textTransform: 'uppercase', 
-                letterSpacing: '1px',
-                fontWeight: '800'
-              }}>
+          <div className="user-profile">
+            <div className="user-info-text">
+              <span className="user-name">Welcome, {userName}</span>
+              <span className="user-role-badge">
                 {role === "system_admin" ? "System Admin" : role === "admin" ? "Admin" : "User"}
               </span>
             </div>
-            <div className="avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#4E342E', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+            <div className="avatar">
               {userName.charAt(0).toUpperCase()}
             </div>
-            <button className="logout-btn-header" onClick={handleLogout} style={{marginLeft:'8px', padding:'8px 16px', background:'#FDFCF9', border:'1px solid #D7CCC8', borderRadius:'6px', cursor:'pointer', color:'#4E342E', fontSize:'13px', fontWeight:'600', transition: 'all 0.2s ease'}}>
+            <button className="logout-btn-header logout-btn" onClick={handleLogout} style={{marginLeft:'8px', padding:'8px 16px', marginTop: 0}}>
               Sign Out
             </button>
           </div>
@@ -347,18 +343,18 @@ function Dashboard() {
           {/* ========================================================= */}
           {role === 'system_admin' && activeTab === 'users' && (
             <div className="pro-card tab-module">
-              <h2 style={{borderBottom:'1px solid #EAE3D9', paddingBottom:'15px', marginBottom:'15px'}}>Platform Users</h2>
+              <h2>Platform Users</h2>
               <table className="data-table">
-                <thead><tr><th style={{paddingBottom:'10px'}}>Name</th><th style={{paddingBottom:'10px'}}>Email</th><th style={{paddingBottom:'10px'}}>Role</th><th style={{paddingBottom:'10px', textAlign:'right'}}>System Action</th></tr></thead>
+                <thead><tr><th>Name</th><th>Email</th><th>Role</th><th style={{textAlign:'right'}}>System Action</th></tr></thead>
                 <tbody>
                   {users.map(u => (
                     <tr key={u._id}>
-                       <td style={{padding:'12px 10px'}}>{u.name}</td>
-                       <td style={{padding:'12px 10px'}}>{u.email}</td>
-                       <td style={{padding:'12px 10px'}}>{u.role.toUpperCase()}</td>
-                       <td style={{padding:'12px 10px', textAlign:'right'}}>
+                       <td>{u.name}</td>
+                       <td>{u.email}</td>
+                       <td>{u.role.toUpperCase()}</td>
+                       <td style={{textAlign:'right'}}>
                          {u.role !== 'system_admin' && (
-                           <button onClick={() => deleteSystemUser(u._id)} style={{background:'#FDFCF9', color:'#8D6E63', border:'1px solid #D7CCC8', padding:'6px 15px', borderRadius:'4px', cursor:'pointer', fontSize:'12px', fontWeight:'600'}}>
+                           <button onClick={() => deleteSystemUser(u._id)} className="btn-action delete" style={{padding:'6px 15px'}}>
                              WIPE USER
                            </button>
                          )}
@@ -375,7 +371,7 @@ function Dashboard() {
           {/* ========================================================= */}
           {role === 'system_admin' && activeTab === 'settings' && (
             <div className="tab-module">
-              <h2 style={{fontSize: '20px', color: '#2C1E16', marginBottom: '20px', fontWeight: '600'}}>System Controls</h2>
+              <h2 style={{fontSize: '20px', color: '#ffffff', marginBottom: '20px', fontWeight: '600'}}>System Controls</h2>
               <div className="system-controls-grid">
                 <div className="pro-card control-card"><p>Maintenance Mode</p><input type="checkbox"/></div>
                 <div className="pro-card control-card"><p>Open Enrollment</p><input type="checkbox" defaultChecked/></div>
@@ -392,20 +388,20 @@ function Dashboard() {
             <div className="tab-module">
               <div className="system-controls-grid" style={{marginBottom:'30px'}}>
                 <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start'}}>
-                  <h3 style={{fontSize:'12px', color:'#A1887F', textTransform:'uppercase'}}>Total Platform Users</h3>
-                  <p style={{fontSize:'32px', color:'#2C1E16', margin:'10px 0 0 0'}}>{users.length}</p>
+                  <h3 style={{fontSize:'12px', color:'#888888', textTransform:'uppercase'}}>Total Platform Users</h3>
+                  <p style={{fontSize:'32px', color:'#ffffff', margin:'10px 0 0 0'}}>{users.length}</p>
                 </div>
-                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid #800000'}}>
-                  <h3 style={{fontSize:'12px', color:'#800000', textTransform:'uppercase', fontWeight: '800'}}>Global Tasks</h3>
-                  <p style={{fontSize:'36px', color:'#1E1B4B', margin:'10px 0 0 0', fontWeight: '900'}}>{totalTasks}</p>
+                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid #00C896'}}>
+                  <h3 style={{fontSize:'12px', color:'#00C896', textTransform:'uppercase', fontWeight: '800'}}>Global Tasks</h3>
+                  <p style={{fontSize:'36px', color:'#ffffff', margin:'10px 0 0 0', fontWeight: '900'}}>{totalTasks}</p>
                 </div>
-                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid #A52A2A'}}>
-                  <h3 style={{fontSize:'12px', color:'#A52A2A', textTransform:'uppercase', fontWeight: '800'}}>Completion Rate</h3>
-                  <p style={{fontSize:'36px', color:'#111827', margin:'10px 0 0 0', fontWeight: '900'}}>{completionRate}%</p>
+                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid #33D9AE'}}>
+                  <h3 style={{fontSize:'12px', color:'#33D9AE', textTransform:'uppercase', fontWeight: '800'}}>Completion Rate</h3>
+                  <p style={{fontSize:'36px', color:'#ffffff', margin:'10px 0 0 0', fontWeight: '900'}}>{completionRate}%</p>
                 </div>
               </div>
               <div className="pro-card chart-container">
-                <h2 style={{borderBottom:'none'}}>Global Task Status</h2>
+                <h2>Global Task Status</h2>
                 <Bar data={chartData} options={chartOptions} />
               </div>
             </div>
@@ -421,56 +417,77 @@ function Dashboard() {
           {(role === 'admin' || role === 'system_admin' || editingId) && (
             <div className="quick-add-bar pro-card">
               <h2>{editingId ? "Edit Task" : "Quick Add Task"}</h2>
-              <form className="task-form" style={{display:'grid', gridTemplateColumns:'2fr 2fr 1fr 1fr auto', gap:'15px', alignItems:'center'}} onSubmit={handleSubmit}>
-                <div className="input-group" style={{marginBottom:'0'}}>
+              <form className="quick-add-form" onSubmit={handleSubmit}>
+                <div className="dash-input-group" style={{ gridArea: 'title' }}>
+                  <label>Title</label>
                   <input
                     type="text"
                     placeholder="Task Title..."
                     value={form.title}
                     onChange={(e) => setForm({ ...form, title: e.target.value })}
-                    style={{width:'100%', padding:'10px', boxSizing:'border-box'}}
                   />
                 </div>
-                <div className="input-group" style={{marginBottom:'0'}}>
+                <div className="dash-input-group" style={{ gridArea: 'desc' }}>
+                  <label>Description</label>
                   <input
                     type="text"
                     placeholder="Short Description..."
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
-                    style={{width:'100%', padding:'10px', boxSizing:'border-box'}}
                   />
                 </div>
-                <div className="input-group" style={{marginBottom:'0'}}>
+                <div className="dash-input-group" style={{ gridArea: 'assignee' }}>
+                  <label>Assignee</label>
                   <select 
-                     className="task-select minimal-select" 
+                     className="task-select" 
                      value={form.assignedTo}
                      onChange={(e) => setForm({ ...form, assignedTo: e.target.value })}
-                     style={{width:'100%', padding:'10px', boxSizing:'border-box'}}
                   >
-                    <option value="" disabled>Assign To...</option>
+                    <option value="" disabled>User...</option>
                     {users.filter(u => u.role === 'user' || u.role === 'admin').map(u => (
                        <option key={u._id} value={u._id}>{u.name} ({u.role})</option>
                     ))}
                   </select>
                 </div>
-                <div className="input-group" style={{marginBottom:'0'}}>
+                <div className="dash-input-group" style={{ gridArea: 'status' }}>
+                  <label>Status</label>
                   <select 
-                     className="task-select minimal-select" 
+                     className="task-select" 
                      value={form.status}
                      onChange={(e) => setForm({ ...form, status: e.target.value })}
-                     style={{width:'100%', padding:'10px', boxSizing:'border-box'}}
                   >
                     <option value="pending">Pending</option>
                     <option value="in-progress">In progress</option>
                     <option value="completed">Completed</option>
                   </select>
                 </div>
-                <div className="form-actions inline-actions" style={{display:'flex', gap:'10px', marginTop:'0'}}>
-                  <button type="submit" className="btn-primary" style={{padding:'10px 15px', whiteSpace:'nowrap'}}>
+                <div className="dash-input-group" style={{ gridArea: 'priority' }}>
+                  <label>Priority</label>
+                  <select 
+                     className="task-select" 
+                     value={form.priority}
+                     onChange={(e) => setForm({ ...form, priority: e.target.value })}
+                  >
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+                </div>
+                <div className="dash-input-group" style={{ gridArea: 'due' }}>
+                  <label>Due Date</label>
+                  <input
+                    type="date"
+                    value={form.dueDate}
+                    onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
+                    style={{colorScheme: "dark"}}
+                  />
+                </div>
+                <div className="form-actions" style={{ gridArea: 'actions', display: 'flex', justifyContent: 'flex-end', gap: '10px', alignItems: 'flex-end' }}>
+                  <button type="submit" className="btn-primary" style={{ flex: '0 1 150px' }}>
                     {editingId ? "Save Edit" : "Add Task"}
                   </button>
                   {editingId && (
-                    <button type="button" className="btn-secondary" onClick={() => { setEditingId(null); setForm({title:"", description:"", assignedTo:"", status:"pending"}); }} style={{padding:'10px 15px', whiteSpace:'nowrap'}}>
+                    <button type="button" className="btn-secondary" onClick={() => { setEditingId(null); setForm({title:"", description:"", assignedTo:"", status:"pending", priority:"medium", dueDate:""}); }}>
                       Cancel
                     </button>
                   )}
@@ -484,15 +501,15 @@ function Dashboard() {
             {role === 'admin' && (
               <div className="left-column">
                 <div className="pro-card chart-container">
-                  <h2 style={{ color: '#800000' }}>Analytics Overview</h2>
+                  <h2 style={{ color: '#00C896' }}>Analytics Overview</h2>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
-                     <div style={{ background: '#FFF0F5', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid #F5E6E6' }}>
-                        <p style={{ fontSize: '11px', color: '#800000', fontWeight: '800', textTransform: 'uppercase' }}>Scope</p>
-                        <p style={{ fontSize: '24px', fontWeight: '900', color: '#1E1B4B' }}>{totalTasks}</p>
+                     <div style={{ background: 'rgba(0, 200, 150, 0.1)', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(0, 200, 150, 0.3)' }}>
+                        <p style={{ fontSize: '11px', color: '#00C896', fontWeight: '800', textTransform: 'uppercase' }}>Scope</p>
+                        <p style={{ fontSize: '24px', fontWeight: '900', color: '#ffffff' }}>{totalTasks}</p>
                      </div>
-                     <div style={{ background: '#FFF5F5', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid #FFE3E3' }}>
-                        <p style={{ fontSize: '11px', color: '#B22222', fontWeight: '800', textTransform: 'uppercase' }}>Efficiency</p>
-                        <p style={{ fontSize: '24px', fontWeight: '900', color: '#1E1B4B' }}>{completionRate}%</p>
+                     <div style={{ background: 'rgba(51, 217, 174, 0.1)', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(51, 217, 174, 0.3)' }}>
+                        <p style={{ fontSize: '11px', color: '#33D9AE', fontWeight: '800', textTransform: 'uppercase' }}>Efficiency</p>
+                        <p style={{ fontSize: '24px', fontWeight: '900', color: '#ffffff' }}>{completionRate}%</p>
                      </div>
                   </div>
                   <Bar data={chartData} options={chartOptions} />
@@ -522,14 +539,15 @@ function Dashboard() {
                         <div className="title-wrapper">
                           <span className={`status-dot ${statusClass}`}></span>
                           <h3>{task.title}</h3>
+                          <span className={`priority-badge ${task.priority || "medium"}`}>{task.priority || "medium"}</span>
                         </div>
                         <select 
                           className="status-dropdown"
                           value={task.status || "pending"}
                           style={{
-                            background: task.status === 'completed' ? '#800000' : task.status === 'in-progress' ? '#B22222' : '#EF4444',
-                            color: 'white',
-                            fontWeight: '700',
+                            background: task.status === 'completed' ? '#10b981' : task.status === 'in-progress' ? '#00C896' : '#eab308',
+                            color: '#0B1410',
+                            fontWeight: '800',
                             border: 'none',
                             padding: '4px 12px',
                             borderRadius: '50px'
@@ -551,9 +569,14 @@ function Dashboard() {
                         <div className="description-box">
                           <span className="desc-label">Task Description</span>
                           <p>{task.description}</p>
+                          {task.dueDate && (
+                             <div style={{marginTop: '10px', fontSize: '11px', color: '#00C896', fontWeight: 'bold'}}>
+                                Due: {new Date(task.dueDate).toLocaleDateString()}
+                             </div>
+                          )}
                         </div>
                         {role === "user" && (
-                           <div className="admin-badge" style={{marginTop:'10px', display:'block', background:'transparent', border: '1px dashed #D7CCC8', textAlign:'center'}}>
+                           <div className="admin-badge" style={{marginTop:'10px', display:'block', background:'transparent', border: '1px dashed #1B2F24', textAlign:'center', color: '#a0a0a0'}}>
                               Created: {new Date(task.createdAt).toLocaleDateString()}
                            </div>
                         )}
@@ -561,18 +584,18 @@ function Dashboard() {
                       
                       <div className="task-card-footer">
                         {/* THE REPLY FEED */}
-                        <div className="replies-section" style={{background:'#FDFCF9', padding:'10px', borderRadius:'6px', border:'1px solid #EAE3D9', marginBottom:'15px'}}>
+                        <div className="replies-section" style={{background:'#0B1410', padding:'10px', borderRadius:'6px', border:'1px solid #1B2F24', marginBottom:'15px'}}>
                           {task.replies && task.replies.length > 0 ? (
                             <div className="replies-list" style={{maxHeight:'100px', overflowY:'auto', display:'flex', flexDirection:'column', gap:'5px', marginBottom:'10px'}}>
                               {task.replies.map((reply, i) => (
-                                <div key={i} style={{fontSize:'13px', padding:'6px', background: reply.sender === userName ? '#F5F5F5' : '#FFFFFF', border:'1px solid #EAE3D9', borderRadius:'4px'}}>
-                                  <span style={{fontWeight:'600', color:'#4E342E', marginRight:'5px'}}>{reply.sender}:</span>
-                                  <span style={{color:'#5A4A42'}}>{reply.text}</span>
+                                <div key={i} style={{fontSize:'13px', padding:'6px', background: reply.sender === userName ? '#12221A' : '#1B2F24', border:'1px solid #1B2F24', borderRadius:'4px'}}>
+                                  <span style={{fontWeight:'600', color:'#00C896', marginRight:'5px'}}>{reply.sender}:</span>
+                                  <span style={{color:'#ffffff'}}>{reply.text}</span>
                                 </div>
                               ))}
                             </div>
                           ) : (
-                            <p style={{fontSize:'12px', color:'#A1887F', fontStyle:'italic', textAlign:'center', margin:'0 0 10px 0'}}>No status notes yet.</p>
+                            <p style={{fontSize:'12px', color:'#666666', fontStyle:'italic', textAlign:'center', margin:'0 0 10px 0'}}>No status notes yet.</p>
                           )}
                           {role === 'user' && (
                             <form className="reply-form" onSubmit={(e) => handleReplySubmit(e, task._id)} style={{display:'flex', gap:'5px', marginTop:'5px'}}>
@@ -581,20 +604,20 @@ function Dashboard() {
                                  placeholder="Send a status update..."
                                  value={replyTexts[task._id] || ""}
                                  onChange={e => setReplyTexts({...replyTexts, [task._id]: e.target.value})}
-                                 style={{flex:1, padding:'8px', border:'1px solid #D7CCC8', borderRadius:'4px', fontSize:'13px'}}
+                                 style={{flex:1, padding:'8px', borderRadius:'4px', fontSize:'13px'}}
                                />
-                               <button type="submit" style={{padding:'8px 12px', background:'#4E342E', color:'white', border:'none', borderRadius:'4px', cursor:'pointer', fontSize:'13px'}}>Send</button>
+                               <button type="submit" style={{padding:'8px 12px', border:'none', borderRadius:'4px', cursor:'pointer', fontSize:'13px', fontWeight: 'bold'}}>Send</button>
                             </form>
                           )}
                         </div>
                         
                         {/* TASK CONTROLS */}
                         {role !== 'user' && (
-                          <div className="task-actions-box" style={{display:'flex', gap:'10px', width:'100%', background:'#FAFAF8', border:'1px solid #EAE3D9', borderRadius:'6px', padding:'10px', marginTop:'15px'}}>
-                            <button className="btn-action edit" onClick={() => handleEdit(task)} style={{flex:1, display:'flex', justifyContent:'center'}}>
+                          <div className="task-actions-box" style={{display:'flex', gap:'10px', width:'100%', background:'#12221A', border:'1px solid #1B2F24', borderRadius:'6px', padding:'10px', marginTop:'15px'}}>
+                            <button className="btn-action edit" onClick={() => handleEdit(task)}>
                               Edit Task
                             </button>
-                            <button className="btn-action delete" onClick={() => deleteTask(task._id)} style={{flex:1, display:'flex', justifyContent:'center'}}>
+                            <button className="btn-action delete" onClick={() => deleteTask(task._id)}>
                               Delete
                             </button>
                           </div>
@@ -618,4 +641,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-//Adding task status

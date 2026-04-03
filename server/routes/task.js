@@ -39,11 +39,13 @@ router.post("/add", async (req, res) => {
     if (req.user.role !== 'admin' && req.user.role !== 'system_admin') {
       return res.status(403).json({ message: "Unauthorized: Only authorized management can create tasks." });
     }
-    const { title, description, assignedTo } = req.body;
+    const { title, description, assignedTo, priority, dueDate } = req.body;
 
     const task = new Task({
       title,
       description,
+      priority: priority || "medium",
+      dueDate: dueDate || null,
       userId: assignedTo || req.user.id
     });
 
