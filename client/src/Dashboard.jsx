@@ -34,6 +34,14 @@ function Dashboard() {
   const [users, setUsers] = useState([]);
   const [replyTexts, setReplyTexts] = useState({});
 
+  const [showNotifications, setShowNotifications] = useState(false);
+  
+  // Planned integration with backend, mock for now
+  const [notifications, setNotifications] = useState([
+    { id: 1, text: "System maintenance at midnight", unread: true },
+    { id: 2, text: "New task assigned: Homepage Redesign", unread: true }
+  ]);
+
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role") || "user";
@@ -83,6 +91,11 @@ function Dashboard() {
 
     if (!form.title || !form.description) {
       toast.error("Please fill out required fields");
+      return;
+    }
+
+    if (!form.assignedTo) {
+      toast.error("Please assign the task to a user");
       return;
     }
 
@@ -224,12 +237,12 @@ function Dashboard() {
         data: [pendingCount, progressCount, completedCount],
         backgroundColor: [
           'rgba(234, 179, 8, 0.8)',  // Yellow
-          'rgba(0, 200, 150, 0.8)', // Orange
+          'rgba(255, 107, 0, 0.8)',  // Orange
           'rgba(16, 185, 129, 0.8)'  // Green
         ],
         borderColor: [
           '#ca8a04',
-          '#00C896',
+          '#ff6b00',
           '#059669'
         ],
         borderWidth: 1,
@@ -320,6 +333,42 @@ function Dashboard() {
           </div>
 
           <div className="user-profile">
+            {/* Notification Bell */}
+            <div className="notification-bell-container">
+              <button 
+                className="notification-btn" 
+                onClick={() => setShowNotifications(!showNotifications)}
+                title="Notifications"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                {notifications.filter(n => n.unread).length > 0 && (
+                  <span className="notification-badge">
+                    {notifications.filter(n => n.unread).length}
+                  </span>
+                )}
+              </button>
+              
+              {showNotifications && (
+                <div className="notifications-dropdown pro-card">
+                  <h4>Notifications</h4>
+                  {notifications.length === 0 ? (
+                    <p className="no-notifications">No new updates</p>
+                  ) : (
+                    <ul className="notification-list">
+                      {notifications.map(n => (
+                        <li key={n.id} className={n.unread ? "unread" : ""}>
+                          {n.text}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div className="user-info-text">
               <span className="user-name">Welcome, {userName}</span>
               <span className="user-role-badge">
@@ -327,7 +376,7 @@ function Dashboard() {
               </span>
             </div>
             <div className="avatar">
-              {userName.charAt(0).toUpperCase()}
+              {userName ? userName.charAt(0).toUpperCase() : "U"}
             </div>
             <button className="logout-btn-header logout-btn" onClick={handleLogout} style={{marginLeft:'8px', padding:'8px 16px', marginTop: 0}}>
               Sign Out

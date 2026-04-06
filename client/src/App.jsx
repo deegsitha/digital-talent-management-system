@@ -4,7 +4,6 @@ import Register from "./Register";
 import Dashboard from "./Dashboard";
 
 
-
 function App() {
   return (
     <BrowserRouter>
