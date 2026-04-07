@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "./Dashboard.css";
+import ThemeToggle from "./ThemeToggle";
 
 // Chart
 import { Bar } from "react-chartjs-2";
@@ -34,13 +35,7 @@ function Dashboard() {
   const [users, setUsers] = useState([]);
   const [replyTexts, setReplyTexts] = useState({});
 
-  const [showNotifications, setShowNotifications] = useState(false);
-  
-  // Planned integration with backend, mock for now
-  const [notifications, setNotifications] = useState([
-    { id: 1, text: "System maintenance at midnight", unread: true },
-    { id: 2, text: "New task assigned: Homepage Redesign", unread: true }
-  ]);
+
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -107,6 +102,7 @@ function Dashboard() {
           { headers: { Authorization: token } }
         );
         toast.success("Task updated");
+
         setEditingId(null);
       } else {
         await axios.post(
@@ -115,6 +111,9 @@ function Dashboard() {
           { headers: { Authorization: token } }
         );
         toast.success("Task created");
+        const assignee = users.find(u => u._id === form.assignedTo);
+        const assigneeName = assignee ? assignee.name : "a user";
+
       }
 
       setForm({ title: "", description: "", assignedTo: "", status: "pending", priority: "medium", dueDate: "" });
@@ -333,41 +332,7 @@ function Dashboard() {
           </div>
 
           <div className="user-profile">
-            {/* Notification Bell */}
-            <div className="notification-bell-container">
-              <button 
-                className="notification-btn" 
-                onClick={() => setShowNotifications(!showNotifications)}
-                title="Notifications"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                </svg>
-                {notifications.filter(n => n.unread).length > 0 && (
-                  <span className="notification-badge">
-                    {notifications.filter(n => n.unread).length}
-                  </span>
-                )}
-              </button>
-              
-              {showNotifications && (
-                <div className="notifications-dropdown pro-card">
-                  <h4>Notifications</h4>
-                  {notifications.length === 0 ? (
-                    <p className="no-notifications">No new updates</p>
-                  ) : (
-                    <ul className="notification-list">
-                      {notifications.map(n => (
-                        <li key={n.id} className={n.unread ? "unread" : ""}>
-                          {n.text}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )}
-            </div>
+            <ThemeToggle className="header-theme-toggle" />
 
             <div className="user-info-text">
               <span className="user-name">Welcome, {userName}</span>
@@ -420,7 +385,7 @@ function Dashboard() {
           {/* ========================================================= */}
           {role === 'system_admin' && activeTab === 'settings' && (
             <div className="tab-module">
-              <h2 style={{fontSize: '20px', color: '#ffffff', marginBottom: '20px', fontWeight: '600'}}>System Controls</h2>
+              <h2 style={{fontSize: '20px', color: 'var(--text-h)', marginBottom: '20px', fontWeight: '600'}}>System Controls</h2>
               <div className="system-controls-grid">
                 <div className="pro-card control-card"><p>Maintenance Mode</p><input type="checkbox"/></div>
                 <div className="pro-card control-card"><p>Open Enrollment</p><input type="checkbox" defaultChecked/></div>
@@ -437,16 +402,16 @@ function Dashboard() {
             <div className="tab-module">
               <div className="system-controls-grid" style={{marginBottom:'30px'}}>
                 <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start'}}>
-                  <h3 style={{fontSize:'12px', color:'#888888', textTransform:'uppercase'}}>Total Platform Users</h3>
-                  <p style={{fontSize:'32px', color:'#ffffff', margin:'10px 0 0 0'}}>{users.length}</p>
+                  <h3 style={{fontSize:'12px', color:'var(--text-muted)', textTransform:'uppercase'}}>Total Platform Users</h3>
+                  <p style={{fontSize:'32px', color:'var(--text-h)', margin:'10px 0 0 0'}}>{users.length}</p>
                 </div>
-                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid #00C896'}}>
-                  <h3 style={{fontSize:'12px', color:'#00C896', textTransform:'uppercase', fontWeight: '800'}}>Global Tasks</h3>
-                  <p style={{fontSize:'36px', color:'#ffffff', margin:'10px 0 0 0', fontWeight: '900'}}>{totalTasks}</p>
+                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid var(--accent)'}}>
+                  <h3 style={{fontSize:'12px', color:'var(--accent)', textTransform:'uppercase', fontWeight: '800'}}>Global Tasks</h3>
+                  <p style={{fontSize:'36px', color:'var(--text-h)', margin:'10px 0 0 0', fontWeight: '900'}}>{totalTasks}</p>
                 </div>
-                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid #33D9AE'}}>
-                  <h3 style={{fontSize:'12px', color:'#33D9AE', textTransform:'uppercase', fontWeight: '800'}}>Completion Rate</h3>
-                  <p style={{fontSize:'36px', color:'#ffffff', margin:'10px 0 0 0', fontWeight: '900'}}>{completionRate}%</p>
+                <div className="pro-card control-card" style={{flexDirection:'column', alignItems:'flex-start', borderLeft: '6px solid var(--accent-hover)'}}>
+                  <h3 style={{fontSize:'12px', color:'var(--accent-hover)', textTransform:'uppercase', fontWeight: '800'}}>Completion Rate</h3>
+                  <p style={{fontSize:'36px', color:'var(--text-h)', margin:'10px 0 0 0', fontWeight: '900'}}>{completionRate}%</p>
                 </div>
               </div>
               <div className="pro-card chart-container">
@@ -528,7 +493,6 @@ function Dashboard() {
                     type="date"
                     value={form.dueDate}
                     onChange={(e) => setForm({ ...form, dueDate: e.target.value })}
-                    style={{colorScheme: "dark"}}
                   />
                 </div>
                 <div className="form-actions" style={{ gridArea: 'actions', display: 'flex', justifyContent: 'flex-end', gap: '10px', alignItems: 'flex-end' }}>
@@ -550,15 +514,15 @@ function Dashboard() {
             {role === 'admin' && (
               <div className="left-column">
                 <div className="pro-card chart-container">
-                  <h2 style={{ color: '#00C896' }}>Analytics Overview</h2>
+                  <h2 style={{ color: 'var(--accent)' }}>Analytics Overview</h2>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
-                     <div style={{ background: 'rgba(0, 200, 150, 0.1)', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(0, 200, 150, 0.3)' }}>
-                        <p style={{ fontSize: '11px', color: '#00C896', fontWeight: '800', textTransform: 'uppercase' }}>Scope</p>
-                        <p style={{ fontSize: '24px', fontWeight: '900', color: '#ffffff' }}>{totalTasks}</p>
+                     <div style={{ background: 'var(--accent-bg)', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid var(--accent-border)' }}>
+                        <p style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: '800', textTransform: 'uppercase' }}>Scope</p>
+                        <p style={{ fontSize: '24px', fontWeight: '900', color: 'var(--text-h)' }}>{totalTasks}</p>
                      </div>
-                     <div style={{ background: 'rgba(51, 217, 174, 0.1)', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(51, 217, 174, 0.3)' }}>
-                        <p style={{ fontSize: '11px', color: '#33D9AE', fontWeight: '800', textTransform: 'uppercase' }}>Efficiency</p>
-                        <p style={{ fontSize: '24px', fontWeight: '900', color: '#ffffff' }}>{completionRate}%</p>
+                     <div style={{ background: 'var(--accent-bg)', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid var(--accent-border)' }}>
+                        <p style={{ fontSize: '11px', color: 'var(--accent-hover)', fontWeight: '800', textTransform: 'uppercase' }}>Efficiency</p>
+                        <p style={{ fontSize: '24px', fontWeight: '900', color: 'var(--text-h)' }}>{completionRate}%</p>
                      </div>
                   </div>
                   <Bar data={chartData} options={chartOptions} />
@@ -594,8 +558,8 @@ function Dashboard() {
                           className="status-dropdown"
                           value={task.status || "pending"}
                           style={{
-                            background: task.status === 'completed' ? '#10b981' : task.status === 'in-progress' ? '#00C896' : '#eab308',
-                            color: '#0B1410',
+                            background: task.status === 'completed' ? 'var(--success)' : task.status === 'in-progress' ? 'var(--accent)' : 'var(--warning)',
+                            color: 'var(--bg)',
                             fontWeight: '800',
                             border: 'none',
                             padding: '4px 12px',
@@ -633,18 +597,18 @@ function Dashboard() {
                       
                       <div className="task-card-footer">
                         {/* THE REPLY FEED */}
-                        <div className="replies-section" style={{background:'#0B1410', padding:'10px', borderRadius:'6px', border:'1px solid #1B2F24', marginBottom:'15px'}}>
+                        <div className="replies-section" style={{background:'var(--bg)', padding:'10px', borderRadius:'6px', border:'1px solid var(--border)', marginBottom:'15px'}}>
                           {task.replies && task.replies.length > 0 ? (
                             <div className="replies-list" style={{maxHeight:'100px', overflowY:'auto', display:'flex', flexDirection:'column', gap:'5px', marginBottom:'10px'}}>
                               {task.replies.map((reply, i) => (
-                                <div key={i} style={{fontSize:'13px', padding:'6px', background: reply.sender === userName ? '#12221A' : '#1B2F24', border:'1px solid #1B2F24', borderRadius:'4px'}}>
-                                  <span style={{fontWeight:'600', color:'#00C896', marginRight:'5px'}}>{reply.sender}:</span>
-                                  <span style={{color:'#ffffff'}}>{reply.text}</span>
+                                <div key={i} style={{fontSize:'13px', padding:'6px', background: reply.sender === userName ? 'var(--bg-secondary)' : 'var(--bg-tertiary)', border:'1px solid var(--border)', borderRadius:'4px'}}>
+                                  <span style={{fontWeight:'600', color:'var(--accent)', marginRight:'5px'}}>{reply.sender}:</span>
+                                  <span style={{color:'var(--text)'}}>{reply.text}</span>
                                 </div>
                               ))}
                             </div>
                           ) : (
-                            <p style={{fontSize:'12px', color:'#666666', fontStyle:'italic', textAlign:'center', margin:'0 0 10px 0'}}>No status notes yet.</p>
+                            <p style={{fontSize:'12px', color:'var(--text-muted)', fontStyle:'italic', textAlign:'center', margin:'0 0 10px 0'}}>No status notes yet.</p>
                           )}
                           {role === 'user' && (
                             <form className="reply-form" onSubmit={(e) => handleReplySubmit(e, task._id)} style={{display:'flex', gap:'5px', marginTop:'5px'}}>
@@ -662,7 +626,7 @@ function Dashboard() {
                         
                         {/* TASK CONTROLS */}
                         {role !== 'user' && (
-                          <div className="task-actions-box" style={{display:'flex', gap:'10px', width:'100%', background:'#12221A', border:'1px solid #1B2F24', borderRadius:'6px', padding:'10px', marginTop:'15px'}}>
+                          <div className="task-actions-box" style={{display:'flex', gap:'10px', width:'100%', background:'var(--bg-secondary)', border:'1px solid var(--border)', borderRadius:'6px', padding:'10px', marginTop:'15px'}}>
                             <button className="btn-action edit" onClick={() => handleEdit(task)}>
                               Edit Task
                             </button>

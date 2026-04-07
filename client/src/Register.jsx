@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import "./Auth.css";
+import ThemeToggle from "./ThemeToggle";
 
 function Register() {
   const navigate = useNavigate();
@@ -40,6 +41,9 @@ function Register() {
 
   return (
     <div className="auth-wrapper split-layout">
+      <div style={{ position: 'absolute', top: '20px', right: '20px', zIndex: 100 }}>
+        <ThemeToggle />
+      </div>
 
       {/* BRANDING SIDE */}
       <div className="auth-brand">

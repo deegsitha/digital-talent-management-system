@@ -1,9 +1,13 @@
 :root {
+  /* DARK THEME (DEFAULT) */
   --text: #e0e0e0;
   --text-h: #ffffff;
+  --text-muted: #888888;
   --bg: #0B1410;
   --bg-secondary: #12221A;
+  --bg-tertiary: #1B2F24;
   --border: #1B2F24;
+  --border-focus: rgba(0, 200, 150, 0.4);
   --code-bg: #12221A;
   --accent: #00C896;
   --accent-hover: #33D9AE;
@@ -13,22 +17,60 @@
   --accent-border: rgba(0, 200, 150, 0.4);
   --social-bg: rgba(30, 30, 30, 0.9);
   --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
+  --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.3);
+  --input-bg: #0E1A14;
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.1);
+  --warning: #eab308;
+  --success: #10b981;
+}
 
+[data-theme="light"] {
+  /* LIGHT THEME */
+  --text: #374151;
+  --text-h: #111827;
+  --text-muted: #6b7280;
+  --bg: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --border: #e2e8f0;
+  --border-focus: rgba(0, 162, 122, 0.5);
+  --code-bg: #f1f5f9;
+  --accent: #00a27a;
+  --accent-hover: #00C896;
+  --accent-2: #E86A14;
+  --accent-3: #CC5B10;
+  --accent-bg: rgba(0, 162, 122, 0.1);
+  --accent-border: rgba(0, 162, 122, 0.3);
+  --social-bg: #ffffff;
+  --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --input-bg: #ffffff;
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.1);
+  --warning: #d97706;
+  --success: #059669;
+}
+
+:root {
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
   --heading: 'Outfit', 'Inter', system-ui, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
+}
 
+body {
   font: 16px/150% var(--sans);
   letter-spacing: 0.1px;
-  color-scheme: dark;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
 
-  @media (max-width: 1024px) {
+@media (max-width: 1024px) {
+  body {
     font-size: 15px;
   }
 }
@@ -101,4 +143,23 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+.theme-toggle-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-color: var(--accent);
 }
