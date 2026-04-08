@@ -509,9 +509,9 @@ function Dashboard() {
             </div>
           )}
           
-          <div className={role === 'user' ? "full-width-feed" : "content-split"}>
-            {/* LEFT COL: Stats (Mid-Management Admin Only) */}
-            {role === 'admin' && (
+          <div className={(role === 'admin' || role === 'user') ? "content-split" : "full-width-feed"}>
+            {/* LEFT COL: Stats (Analytics) */}
+            {(role === 'admin' || role === 'user') && (
               <div className="left-column">
                 <div className="pro-card chart-container">
                   <h2 style={{ color: 'var(--accent)' }}>Analytics Overview</h2>
